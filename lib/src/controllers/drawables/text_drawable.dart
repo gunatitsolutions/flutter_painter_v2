@@ -17,6 +17,8 @@ class TextDrawable extends ObjectDrawable {
   // A text painter which will paint the text on the canvas.
   final TextPainter textPainter;
 
+  final TextAlign textAlign;
+
   /// Creates a [TextDrawable] to draw [text].
   ///
   /// The path will be drawn with the passed [style] if provided.
@@ -29,14 +31,15 @@ class TextDrawable extends ObjectDrawable {
       fontSize: 14,
       color: Colors.black,
     ),
+    this.textAlign = TextAlign.center,
     this.direction = TextDirection.ltr,
     bool locked = false,
     bool hidden = false,
     Set<ObjectDrawableAssist> assists = const <ObjectDrawableAssist>{},
   })  : textPainter = TextPainter(
           text: TextSpan(text: text, style: style),
-          textAlign: TextAlign.center,
-          textScaleFactor: scale,
+          textAlign: textAlign,
+          textScaler: TextScaler.linear(scale),
           textDirection: direction,
         ),
         super(
@@ -52,11 +55,11 @@ class TextDrawable extends ObjectDrawable {
   void drawObject(Canvas canvas, Size size) {
     // Render the text according to the size of the canvas taking the scale in mind
     textPainter.layout(maxWidth: size.width * scale);
-
+    final drawingPosition = position * scale;
     // Paint the text on the canvas
     // It is shifted back by half of its width and height to be drawn in the center
     textPainter.paint(canvas,
-        position - Offset(textPainter.width / 2, textPainter.height / 2));
+        drawingPosition - Offset(textPainter.width / 2, textPainter.height / 2));
   }
 
   /// Creates a copy of this but with the given fields replaced with the new values.
