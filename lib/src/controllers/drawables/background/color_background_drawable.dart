@@ -9,14 +9,28 @@ class ColorBackgroundDrawable extends BackgroundDrawable {
   /// The color to be used as a background.
   final Color color;
 
-  /// Creates a [ColorBackgroundDrawable] to use a color as a background.
-  const ColorBackgroundDrawable({required this.color});
+  /// Optional shader to apply (e.g., gradient).
+  final Shader? shader;
+
+/// Creates a [ColorBackgroundDrawable] to use a color as a background.
+  const ColorBackgroundDrawable({required this.color,
+  this.shader,
+  });
 
   /// Draws the background on the provided [canvas] of size [size].
   @override
   void draw(Canvas canvas, Size size) {
     // Draw the color onto the canvas
     canvas.drawColor(color, BlendMode.src);
+    if(shader != null) {
+      final paint = Paint()
+        ..shader = shader
+        ..blendMode = BlendMode.srcOver; // Optional: control how it blends
+
+      // 3. Draw the shader on top (covering full canvas)
+      canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
+    }
+
   }
 
   // /// Compares two [ColorBackgroundDrawable]s for equality.
