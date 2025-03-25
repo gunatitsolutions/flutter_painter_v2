@@ -1,10 +1,8 @@
-
 import 'package:flutter/cupertino.dart';
 
 import 'background_drawable.dart';
 
 /// Drawable to use a color as a background.
-@immutable
 class ColorBackgroundDrawable extends BackgroundDrawable {
   /// The color to be used as a background.
   final Color color;
@@ -12,9 +10,12 @@ class ColorBackgroundDrawable extends BackgroundDrawable {
   /// Optional shader to apply (e.g., gradient).
   final Shader? shader;
 
-/// Creates a [ColorBackgroundDrawable] to use a color as a background.
-  const ColorBackgroundDrawable({required this.color,
-  this.shader,
+  Rect? _cachedRect;
+
+  /// Creates a [ColorBackgroundDrawable] to use a color as a background.
+   ColorBackgroundDrawable({
+    required this.color,
+    this.shader,
   });
 
   /// Draws the background on the provided [canvas] of size [size].
@@ -22,25 +23,28 @@ class ColorBackgroundDrawable extends BackgroundDrawable {
   void draw(Canvas canvas, Size size) {
     // Draw the color onto the canvas
     canvas.drawColor(color, BlendMode.src);
-    if(shader != null) {
-      final paint = Paint()
-        ..shader = shader
-        ..blendMode = BlendMode.srcOver; // Optional: control how it blends
 
-      // 3. Draw the shader on top (covering full canvas)
-      canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-    }
+    // 3. Reuse existing rect if possible
+    _cachedRect ??= Rect.fromLTWH(0, 0, size.width, size.height);
 
+    final paint = Paint()
+      ..color = color
+      ..shader = shader
+      ..blendMode = shader != null
+          ? BlendMode.srcOver
+          : BlendMode.src; // Optional: control how it blends
+
+    canvas.drawRect(_cachedRect!, paint);
   }
 
-  // /// Compares two [ColorBackgroundDrawable]s for equality.
-  // @override
-  // bool operator ==(Object other) {
-  //   return other is ColorBackgroundDrawable && other.color == color;
-  // }
-  //
-  // @override
-  // int get hashCode => color.hashCode;
+// /// Compares two [ColorBackgroundDrawable]s for equality.
+// @override
+// bool operator ==(Object other) {
+//   return other is ColorBackgroundDrawable && other.color == color;
+// }
+//
+// @override
+// int get hashCode => color.hashCode;
 }
 
 /// An extension on Color to create a background drawable easily.
