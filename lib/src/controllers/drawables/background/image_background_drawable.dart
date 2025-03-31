@@ -55,12 +55,12 @@ class ImageBackgroundDrawable extends BackgroundDrawable {
     }
 
     // Draw the image onto the canvas with applied paint.
-    canvas.drawImageRect(
-      image,
-      Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      paint,
-    );
+    // canvas.drawImageRect(
+    //   image,
+    //   Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+    //   Rect.fromLTWH(0, 0, size.width, size.height),
+    //   paint,
+    // );
 
     // if (imageFilter != null) {
     //   canvas.restore(); // Restore the layer when imageFilter is applied.
