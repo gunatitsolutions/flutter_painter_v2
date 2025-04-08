@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart' as mt;
-
 import 'background_drawable.dart';
 
 /// Drawable to use an image as a background.
@@ -22,13 +21,19 @@ class ImageBackgroundDrawable extends BackgroundDrawable {
   /// Filter quality for scaling the image.
   final FilterQuality filterQuality;
 
+  final Size? fittedSize;
+
+  final mt.BoxFit fit;
+
   /// Creates a [ImageBackgroundDrawable] to use an image as a background.
   const ImageBackgroundDrawable({
     required this.image,
+    this.fittedSize,
     this.shader,
     this.imageFilter,
     this.colorFilter,
     this.filterQuality = FilterQuality.low,
+    this.fit = mt.BoxFit.cover,
   });
 
   /// Draws the image on the provided [canvas] of size [size].
@@ -66,29 +71,56 @@ class ImageBackgroundDrawable extends BackgroundDrawable {
     //   canvas.restore(); // Restore the layer when imageFilter is applied.
     // }
     // Draw the image onto the canvas.
+
+    final inputSize = Size(image.width.toDouble(), image.height.toDouble());
+    final outputSize = size;
+
+    final fittedSizes = mt.applyBoxFit(fit, inputSize, outputSize);
+    final sourceSize = fittedSizes.source;
+    final destinationSize = fittedSizes.destination;
+
+    final dx = (size.width - destinationSize.width) / 2;
+    final dy = (size.height - destinationSize.height) / 2;
+
+    final srcRect =
+        mt.Alignment.center.inscribe(sourceSize, Offset.zero & inputSize);
+    final dstRect =
+        Rect.fromLTWH(dx, dy, destinationSize.width, destinationSize.height);
+
     canvas.drawImageRect(
         image,
-        Rect.fromPoints(Offset.zero,
-            Offset(image.width.toDouble(), image.height.toDouble())),
-        Rect.fromPoints(Offset.zero, Offset(size.width, size.height)),
+        srcRect,
+        dstRect,
         (imageFilter == null && colorFilter == null && shader == null)
             ? Paint()
             : paint);
+    // canvas.drawImageRect(
+    //     image,
+    //     Rect.fromPoints(Offset.zero,
+    //         Offset(image.width.toDouble(), image.height.toDouble())),
+    //     Rect.fromPoints(Offset.zero, Offset(size.width, size.height)),
+    //     (imageFilter == null && colorFilter == null && shader == null)
+    //         ? Paint()
+    //         : paint);
   }
 
   ImageBackgroundDrawable copyWith({
     Image? image,
+    Size? fittedSize,
     Shader? shader,
     ImageFilter? imageFilter,
     ColorFilter? colorFilter,
     FilterQuality? filterQuality,
+    mt.BoxFit? fit,
   }) {
     return ImageBackgroundDrawable(
       image: image ?? this.image,
+      fittedSize: fittedSize ?? this.fittedSize,
       shader: shader ?? this.shader,
       imageFilter: imageFilter ?? this.imageFilter,
       colorFilter: colorFilter ?? this.colorFilter,
       filterQuality: filterQuality ?? this.filterQuality,
+      fit: fit ?? this.fit,
     );
   }
 
