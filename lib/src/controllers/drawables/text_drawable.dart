@@ -19,6 +19,10 @@ class TextDrawable extends ObjectDrawable {
 
   final TextAlign textAlign;
 
+  final bool showBackground;
+
+  final Color backgroundColor;
+
   /// Creates a [TextDrawable] to draw [text].
   ///
   /// The path will be drawn with the passed [style] if provided.
@@ -31,6 +35,8 @@ class TextDrawable extends ObjectDrawable {
       fontSize: 14,
       color: Colors.black,
     ),
+    this.backgroundColor = Colors.blueGrey,
+    this.showBackground = false,
     this.textAlign = TextAlign.center,
     this.direction = TextDirection.ltr,
     bool locked = false,
@@ -53,13 +59,53 @@ class TextDrawable extends ObjectDrawable {
   /// Draws the text on the provided [canvas] of size [size].
   @override
   void drawObject(Canvas canvas, Size size) {
-    // Render the text according to the size of the canvas taking the scale in mind
+    final words = text.split(' ');
+    final padding = 8.0;
+    final drawingPosition = position * scale;
+
+    double xOffset = 0.0;
+    for (String word in words) {
+      final wordPainter = TextPainter(
+        text: TextSpan(text: word, style: style),
+        textAlign: textAlign,
+        textScaler: TextScaler.linear(scale),
+        textDirection: direction,
+      )..layout();
+
+      final wordWidth = wordPainter.width;
+      final wordHeight = wordPainter.height;
+
+      final wordOffset = drawingPosition +
+          Offset(xOffset, 0) -
+          Offset(0, wordHeight / 2);
+
+      // Draw rounded rectangle behind the word
+      if (showBackground) {
+        final rect = Rect.fromLTWH(
+          wordOffset.dx - padding,
+          wordOffset.dy - padding,
+          wordWidth + padding * 2,
+          wordHeight + padding * 2,
+        );
+
+        final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(12));
+        final paint = Paint()..color = backgroundColor;
+        canvas.drawRRect(rrect, paint);
+      }
+
+      // Draw the word text
+      wordPainter.paint(canvas, wordOffset);
+
+      // Move to next word's offset (add spacing)
+      xOffset += wordWidth + padding * 2;
+    }
+    /*// Render the text according to the size of the canvas taking the scale in mind
     textPainter.layout(maxWidth: size.width * scale);
     final drawingPosition = position * scale;
     // Paint the text on the canvas
     // It is shifted back by half of its width and height to be drawn in the center
     textPainter.paint(canvas,
-        drawingPosition - Offset(textPainter.width / 2, textPainter.height / 2));
+        drawingPosition - Offset(textPainter.width / 2, textPainter.height / 2));*/
   }
 
   /// Creates a copy of this but with the given fields replaced with the new values.
@@ -74,6 +120,8 @@ class TextDrawable extends ObjectDrawable {
     TextStyle? style,
     bool? locked,
     TextDirection? direction,
+    bool? showBackground,
+    Color? backgroundColor,
   }) {
     return TextDrawable(
       text: text ?? this.text,
@@ -85,6 +133,8 @@ class TextDrawable extends ObjectDrawable {
       assists: assists ?? this.assists,
       hidden: hidden ?? this.hidden,
       locked: locked ?? this.locked,
+      showBackground: showBackground ?? this.showBackground,
+      backgroundColor: backgroundColor ?? this.backgroundColor,
     );
   }
 
