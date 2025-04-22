@@ -63,34 +63,35 @@ class TextDrawable extends ObjectDrawable {
     textPainter.layout(maxWidth: maxTextWidth);
 
     final drawingPosition = position * scale;
-    final lineCount = textPainter.computeLineMetrics().length;
     final padding = 8.0;
 
     final lines = textPainter.computeLineMetrics();
-    double yOffset = 0.0;
+
+    double lineYOffset = 0.0;
 
     for (final line in lines) {
-      final lineOffset = Offset(line.left, line.baseline - line.ascent);
+      final lineHeight = line.height;
+      final lineWidth = line.width;
+      final baselineOffset = line.baseline - line.ascent;
 
-      // Calculate rect of line with padding
+      // Calculate full rect for the line
       final rect = Rect.fromLTWH(
         drawingPosition.dx + line.left - padding,
-        drawingPosition.dy + yOffset - padding,
-        line.width + padding * 2,
-        line.height + padding * 2,
+        drawingPosition.dy + lineYOffset + baselineOffset - padding,
+        lineWidth + padding * 2,
+        lineHeight + padding * 2,
       );
 
-      // Draw background shape behind line
       if (showBackground) {
-        final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(12));
+        final rrect = RRect.fromRectAndRadius(rect, Radius.circular(12));
         final paint = Paint()..color = backgroundColor;
         canvas.drawRRect(rrect, paint);
       }
 
-      yOffset += line.height;
+      lineYOffset += lineHeight;
     }
 
-    // Draw the full text on top
+    // Finally draw the actual text
     textPainter.paint(canvas, drawingPosition);
     /*// Render the text according to the size of the canvas taking the scale in mind
     textPainter.layout(maxWidth: size.width * scale);
