@@ -59,46 +59,39 @@ class TextDrawable extends ObjectDrawable {
   /// Draws the text on the provided [canvas] of size [size].
   @override
   void drawObject(Canvas canvas, Size size) {
-    final words = text.split(' ');
-    final padding = 8.0;
+    final maxTextWidth = size.width * scale;
+    textPainter.layout(maxWidth: maxTextWidth);
+
     final drawingPosition = position * scale;
+    final lineCount = textPainter.computeLineMetrics().length;
+    final padding = 8.0;
 
-    double xOffset = 0.0;
-    for (String word in words) {
-      final wordPainter = TextPainter(
-        text: TextSpan(text: word, style: style),
-        textAlign: textAlign,
-        textScaler: TextScaler.linear(scale),
-        textDirection: direction,
-      )..layout();
+    final lines = textPainter.computeLineMetrics();
+    double yOffset = 0.0;
 
-      final wordWidth = wordPainter.width;
-      final wordHeight = wordPainter.height;
+    for (final line in lines) {
+      final lineOffset = Offset(line.left, line.baseline - line.ascent);
 
-      final wordOffset = drawingPosition +
-          Offset(xOffset, 0) -
-          Offset(0, wordHeight / 2);
+      // Calculate rect of line with padding
+      final rect = Rect.fromLTWH(
+        drawingPosition.dx + line.left - padding,
+        drawingPosition.dy + yOffset - padding,
+        line.width + padding * 2,
+        line.height + padding * 2,
+      );
 
-      // Draw rounded rectangle behind the word
+      // Draw background shape behind line
       if (showBackground) {
-        final rect = Rect.fromLTWH(
-          wordOffset.dx - padding,
-          wordOffset.dy - padding,
-          wordWidth + padding * 2,
-          wordHeight + padding * 2,
-        );
-
         final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(12));
         final paint = Paint()..color = backgroundColor;
         canvas.drawRRect(rrect, paint);
       }
 
-      // Draw the word text
-      wordPainter.paint(canvas, wordOffset);
-
-      // Move to next word's offset (add spacing)
-      xOffset += wordWidth + padding * 2;
+      yOffset += line.height;
     }
+
+    // Draw the full text on top
+    textPainter.paint(canvas, drawingPosition);
     /*// Render the text according to the size of the canvas taking the scale in mind
     textPainter.layout(maxWidth: size.width * scale);
     final drawingPosition = position * scale;
