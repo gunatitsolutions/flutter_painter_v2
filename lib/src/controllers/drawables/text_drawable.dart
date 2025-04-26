@@ -91,6 +91,7 @@ class TextDrawable extends ObjectDrawable {
         drawingPosition.dx + line.left - padding,
         drawingPosition.dy + line.baseline - lineHeight,
         // drawingPosition.dy + lineYOffset + baselineOffset - padding,
+        // drawingPosition.dy + lineYOffset + lineHeight - padding - baselineOffset,
         lineWidth + padding * 2,
         lineHeight + padding,
       );
@@ -100,6 +101,8 @@ class TextDrawable extends ObjectDrawable {
             rect, Radius.circular(cornerRadius));
         final paint = Paint()
           ..color = backgroundColor;
+        // ..style = PaintingStyle.stroke   // <-- Only stroke, no fill
+        // ..strokeWidth = 2.0;
 
         //slant type
         if (backgroundType == BackgroundType.slant) {
