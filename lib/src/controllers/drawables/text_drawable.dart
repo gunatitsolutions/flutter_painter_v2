@@ -1,7 +1,11 @@
-
 import 'package:flutter/material.dart';
 
 import 'object_drawable.dart';
+
+enum BackgroundType {
+  rect,
+  slant
+}
 
 /// Text Drawable
 class TextDrawable extends ObjectDrawable {
@@ -23,6 +27,11 @@ class TextDrawable extends ObjectDrawable {
 
   final Color backgroundColor;
 
+  final double cornerRadius;
+
+  final BackgroundType backgroundType;
+
+
   /// Creates a [TextDrawable] to draw [text].
   ///
   /// The path will be drawn with the passed [style] if provided.
@@ -39,22 +48,25 @@ class TextDrawable extends ObjectDrawable {
     this.showBackground = false,
     this.textAlign = TextAlign.center,
     this.direction = TextDirection.ltr,
+    this.cornerRadius = 12,
+    this.backgroundType = BackgroundType.rect,
     bool locked = false,
     bool hidden = false,
     Set<ObjectDrawableAssist> assists = const <ObjectDrawableAssist>{},
-  })  : textPainter = TextPainter(
-          text: TextSpan(text: text, style: style),
-          textAlign: textAlign,
-          textScaler: TextScaler.linear(scale),
-          textDirection: direction,
-        ),
+  })
+      : textPainter = TextPainter(
+    text: TextSpan(text: text, style: style),
+    textAlign: textAlign,
+    textScaler: TextScaler.linear(scale),
+    textDirection: direction,
+  ),
         super(
-            position: position,
-            rotationAngle: rotation,
-            scale: scale,
-            assists: assists,
-            locked: locked,
-            hidden: hidden);
+          position: position,
+          rotationAngle: rotation,
+          scale: scale,
+          assists: assists,
+          locked: locked,
+          hidden: hidden);
 
   /// Draws the text on the provided [canvas] of size [size].
   @override
@@ -77,15 +89,31 @@ class TextDrawable extends ObjectDrawable {
       // Calculate full rect for the line
       final rect = Rect.fromLTWH(
         drawingPosition.dx + line.left - padding,
-        drawingPosition.dy + lineYOffset + baselineOffset - padding,
+        drawingPosition.dy + line.baseline - lineHeight,
+        // drawingPosition.dy + lineYOffset + baselineOffset - padding,
         lineWidth + padding * 2,
-        lineHeight + padding * 2,
+        lineHeight + padding,
       );
 
       if (showBackground) {
-        final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(12));
-        final paint = Paint()..color = backgroundColor;
-        canvas.drawRRect(rrect, paint);
+        final rrect = RRect.fromRectAndRadius(
+            rect, Radius.circular(cornerRadius));
+        final paint = Paint()
+          ..color = backgroundColor;
+
+        //slant type
+        if (backgroundType == BackgroundType.slant) {
+          final slant = 10.0;
+          final path = Path()
+            ..moveTo(rrect.left + slant, rrect.top) // Top-left
+            ..lineTo(rrect.right, rrect.top) // Top-right
+            ..lineTo(rrect.right - slant, rrect.bottom) // Bottom-right
+            ..lineTo(rrect.left, rrect.bottom) // Bottom-left
+            ..close();
+          canvas.drawPath(path, paint);
+        } else {
+          canvas.drawRRect(rrect, paint);
+        }
       }
 
       lineYOffset += lineHeight;
@@ -140,24 +168,24 @@ class TextDrawable extends ObjectDrawable {
     return textPainter.size;
   }
 
-  /// Compares two [TextDrawable]s for equality.
-  // @override
-  // bool operator ==(Object other) {
-  //   return other is TextDrawable &&
-  //       super == other &&
-  //       other.text == text &&
-  //       other.style == style &&
-  //       other.direction == direction;
-  // }
-  //
-  // @override
-  // int get hashCode => hashValues(
-  //     hidden,
-  //     hashList(assists),
-  //     hashList(assistPaints.entries),
-  //     position,
-  //     rotationAngle,
-  //     scale,
-  //     style,
-  //     direction);
+/// Compares two [TextDrawable]s for equality.
+// @override
+// bool operator ==(Object other) {
+//   return other is TextDrawable &&
+//       super == other &&
+//       other.text == text &&
+//       other.style == style &&
+//       other.direction == direction;
+// }
+//
+// @override
+// int get hashCode => hashValues(
+//     hidden,
+//     hashList(assists),
+//     hashList(assistPaints.entries),
+//     position,
+//     rotationAngle,
+//     scale,
+//     style,
+//     direction);
 }
