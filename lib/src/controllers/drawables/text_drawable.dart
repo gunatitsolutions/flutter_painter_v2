@@ -83,7 +83,7 @@ class TextDrawable extends ObjectDrawable {
       );
 
       if (showBackground) {
-        final rrect = RRect.fromRectAndRadius(rect, Radius.circular(12));
+        final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(12));
         final paint = Paint()..color = backgroundColor;
         canvas.drawRRect(rrect, paint);
       }
