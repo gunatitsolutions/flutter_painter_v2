@@ -44,7 +44,7 @@ class TextDrawable extends ObjectDrawable {
       fontSize: 14,
       color: Colors.black,
     ),
-    this.backgroundColor = Colors.blueGrey,
+    this.backgroundColor = Colors.transparent,
     this.showBackground = false,
     this.textAlign = TextAlign.center,
     this.direction = TextDirection.ltr,
@@ -106,7 +106,7 @@ class TextDrawable extends ObjectDrawable {
 
         //slant type
         if (backgroundType == BackgroundType.slant) {
-          final slant = 10.0;
+          const slant = 10.0;
           final path = Path()
             ..moveTo(rrect.left + slant, rrect.top) // Top-left
             ..lineTo(rrect.right, rrect.top) // Top-right
