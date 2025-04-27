@@ -41,6 +41,45 @@ class ImageBackgroundDrawable extends BackgroundDrawable {
   void draw(Canvas canvas, Size size) {
     final paint = Paint()..filterQuality = filterQuality;
 
+    if (shader != null) {
+      paint.shader = shader;
+    }
+
+    if (colorFilter != null) {
+      paint.colorFilter = colorFilter;
+    }
+
+    final inputSize = Size(image.width.toDouble(), image.height.toDouble());
+    final outputSize = size;
+
+    final fittedSizes = mt.applyBoxFit(fit, inputSize, outputSize);
+    final sourceSize = fittedSizes.source;
+    final destinationSize = fittedSizes.destination;
+
+    final dx = (size.width - destinationSize.width) / 2;
+    final dy = (size.height - destinationSize.height) / 2;
+
+    final srcRect = mt.Alignment.center.inscribe(sourceSize, Offset.zero & inputSize);
+    final dstRect = Rect.fromLTWH(dx, dy, destinationSize.width, destinationSize.height);
+
+    if (imageFilter != null) {
+      // Save only the image area with blur filter
+      canvas.saveLayer(dstRect, Paint()..imageFilter = imageFilter!);
+    }
+
+    // Draw the image
+    canvas.drawImageRect(
+      image,
+      srcRect,
+      dstRect,
+      (shader == null && colorFilter == null) ? Paint() : paint,
+    );
+
+    if (imageFilter != null) {
+      canvas.restore(); // Restore after background only
+    }
+    /* final paint = Paint()..filterQuality = filterQuality;
+
     // Apply shader if available.
     if (shader != null) {
       paint.shader = shader;
@@ -101,7 +140,7 @@ class ImageBackgroundDrawable extends BackgroundDrawable {
     //     Rect.fromPoints(Offset.zero, Offset(size.width, size.height)),
     //     (imageFilter == null && colorFilter == null && shader == null)
     //         ? Paint()
-    //         : paint);
+    //         : paint);*/
   }
 
   ImageBackgroundDrawable copyWith({
@@ -138,6 +177,6 @@ class ImageBackgroundDrawable extends BackgroundDrawable {
 extension ImageBackgroundDrawableGetter on Image {
   /// Returns an [ImageBackgroundDrawable] of the current [Image].
   ImageBackgroundDrawable get backgroundDrawable => ImageBackgroundDrawable(
-        image: this,
-      );
+    image: this,
+  );
 }
