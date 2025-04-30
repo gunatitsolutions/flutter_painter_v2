@@ -3,8 +3,16 @@ import 'package:flutter/material.dart';
 import 'object_drawable.dart';
 
 enum BackgroundType {
+  noBackground,
   rect,
-  slant
+  slant;
+
+  bool get isNoBackground => this == BackgroundType.noBackground;
+
+  bool get isRect => this == BackgroundType.rect;
+
+  bool get isSlant => this == BackgroundType.slant;
+
 }
 
 /// Text Drawable
@@ -23,7 +31,6 @@ class TextDrawable extends ObjectDrawable {
 
   final TextAlign textAlign;
 
-  final bool showBackground;
 
   final Color backgroundColor;
 
@@ -45,11 +52,10 @@ class TextDrawable extends ObjectDrawable {
       color: Colors.black,
     ),
     this.backgroundColor = Colors.transparent,
-    this.showBackground = false,
     this.textAlign = TextAlign.center,
     this.direction = TextDirection.ltr,
     this.cornerRadius = 12,
-    this.backgroundType = BackgroundType.rect,
+    this.backgroundType = BackgroundType.noBackground,
     bool locked = false,
     bool hidden = false,
     Set<ObjectDrawableAssist> assists = const <ObjectDrawableAssist>{},
@@ -71,10 +77,22 @@ class TextDrawable extends ObjectDrawable {
   /// Draws the text on the provided [canvas] of size [size].
   @override
   void drawObject(Canvas canvas, Size size) {
+    // final maxTextWidth = size.width * scale;
+    // textPainter.layout(maxWidth: maxTextWidth);
+    //
+    // final drawingPosition = position * scale;
+    //
+    // // final drawingPosition = position * scale - Offset(textPainter.width / 2, textPainter.height / 2);
+
+
     final maxTextWidth = size.width * scale;
     textPainter.layout(maxWidth: maxTextWidth);
 
-    final drawingPosition = position * scale;
+// Center the text properly
+    final drawingPosition = position * scale - Offset(textPainter.width / 2, textPainter.height / 2);
+
+// Adjust the selection area to match the text's bounding box
+    final selectionOffset = Offset(textPainter.width / 2, textPainter.height / 2);
     final padding = 8.0;
 
     final lines = textPainter.computeLineMetrics();
@@ -88,15 +106,21 @@ class TextDrawable extends ObjectDrawable {
 
       // Calculate full rect for the line
       final rect = Rect.fromLTWH(
+        drawingPosition.dx - padding,
+        drawingPosition.dy + lineYOffset - padding / 2,
+        lineWidth + padding * 2,
+        lineHeight + padding,
+      );
+      /*  final rect = Rect.fromLTWH(
         drawingPosition.dx + line.left - padding,
         drawingPosition.dy + line.baseline - lineHeight,
         // drawingPosition.dy + lineYOffset + baselineOffset - padding,
         // drawingPosition.dy + lineYOffset + lineHeight - padding - baselineOffset,
         lineWidth + padding * 2,
         lineHeight + padding,
-      );
+      );*/
 
-      if (showBackground) {
+      if (!backgroundType.isNoBackground) {
         final rrect = RRect.fromRectAndRadius(
             rect, Radius.circular(cornerRadius));
         final paint = Paint()
@@ -105,7 +129,7 @@ class TextDrawable extends ObjectDrawable {
         // ..strokeWidth = 2.0;
 
         //slant type
-        if (backgroundType == BackgroundType.slant) {
+        if (backgroundType.isSlant) {
           const slant = 10.0;
           final path = Path()
             ..moveTo(rrect.left + slant, rrect.top) // Top-left
@@ -114,7 +138,7 @@ class TextDrawable extends ObjectDrawable {
             ..lineTo(rrect.left, rrect.bottom) // Bottom-left
             ..close();
           canvas.drawPath(path, paint);
-        } else {
+        } else if (backgroundType.isRect) {
           canvas.drawRRect(rrect, paint);
         }
       }
@@ -142,10 +166,11 @@ class TextDrawable extends ObjectDrawable {
     Offset? position,
     double? rotation,
     double? scale,
+    TextAlign? textAlign,
     TextStyle? style,
     bool? locked,
     TextDirection? direction,
-    bool? showBackground,
+    BackgroundType? backgroundType,
     Color? backgroundColor,
   }) {
     return TextDrawable(
@@ -154,11 +179,12 @@ class TextDrawable extends ObjectDrawable {
       rotation: rotation ?? rotationAngle,
       scale: scale ?? this.scale,
       style: style ?? this.style,
+      textAlign: textAlign ?? this.textAlign,
       direction: direction ?? this.direction,
       assists: assists ?? this.assists,
       hidden: hidden ?? this.hidden,
       locked: locked ?? this.locked,
-      showBackground: showBackground ?? this.showBackground,
+      backgroundType: backgroundType ?? this.backgroundType,
       backgroundColor: backgroundColor ?? this.backgroundColor,
     );
   }
