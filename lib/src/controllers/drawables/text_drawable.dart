@@ -43,6 +43,20 @@ class TextDrawable extends ObjectDrawable {
 
   final double strokeWidth;
 
+  final bool enableStroke;
+
+  final bool enableShadow;
+
+  final Color shadowColor;
+
+  final double shadowBlurRadius;
+
+  final Offset shadowOffset;
+
+  final bool showBackgroundBox;
+
+  final double backgroundPadding;
+
   /// Creates a [TextDrawable] to draw [text].
   ///
   /// The path will be drawn with the passed [style] if provided.
@@ -62,6 +76,13 @@ class TextDrawable extends ObjectDrawable {
     this.backgroundType = BackgroundType.noBackground,
     this.strokeColor = Colors.transparent,
     this.strokeWidth = 0,
+    this.enableStroke = false,
+    this.enableShadow = false,
+    this.shadowColor = Colors.black38,
+    this.shadowBlurRadius = 4.0,
+    this.shadowOffset = const Offset(2, 2),
+    this.showBackgroundBox = false,
+    this.backgroundPadding = 8,
     bool locked = false,
     bool hidden = false,
     Set<ObjectDrawableAssist> assists = const <ObjectDrawableAssist>{},
@@ -184,6 +205,13 @@ class TextDrawable extends ObjectDrawable {
     Color? backgroundColor,
     Color? strokeColor,
     double? strokeWidth,
+    bool? enableStroke,
+    bool? enableShadow,
+    Color? shadowColor,
+    double? shadowBlurRadius,
+    Offset? shadowOffset,
+    bool? showBackgroundBox,
+    double? backgroundPadding,
   }) {
     return TextDrawable(
       text: text ?? this.text,
@@ -200,7 +228,22 @@ class TextDrawable extends ObjectDrawable {
       backgroundColor: backgroundColor ?? this.backgroundColor,
       strokeColor: strokeColor ?? this.strokeColor,
       strokeWidth: strokeWidth ?? this.strokeWidth,
+      enableStroke: enableStroke ?? this.enableStroke,
+      enableShadow: enableShadow ?? this.enableShadow,
+      shadowColor: shadowColor ?? this.shadowColor,
+      shadowBlurRadius: shadowBlurRadius ?? this.shadowBlurRadius,
+      shadowOffset: shadowOffset ?? this.shadowOffset,
+      showBackgroundBox: showBackgroundBox ?? this.showBackgroundBox,
+      backgroundPadding: backgroundPadding ?? this.backgroundPadding,
     );
+  }
+
+  Size size() {
+    final tp = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    return tp.size;
   }
 
   /// Calculates the size of the rendered object.
