@@ -5,14 +5,16 @@ import 'object_drawable.dart';
 enum BackgroundType {
   noBackground,
   rect,
+  stroke,
   slant;
 
   bool get isNoBackground => this == BackgroundType.noBackground;
 
+  bool get isStroke => this == BackgroundType.stroke;
+
   bool get isRect => this == BackgroundType.rect;
 
   bool get isSlant => this == BackgroundType.slant;
-
 }
 
 /// Text Drawable
@@ -31,13 +33,15 @@ class TextDrawable extends ObjectDrawable {
 
   final TextAlign textAlign;
 
-
   final Color backgroundColor;
 
   final double cornerRadius;
 
   final BackgroundType backgroundType;
 
+  final Color strokeColor;
+
+  final double strokeWidth;
 
   /// Creates a [TextDrawable] to draw [text].
   ///
@@ -56,23 +60,24 @@ class TextDrawable extends ObjectDrawable {
     this.direction = TextDirection.ltr,
     this.cornerRadius = 12,
     this.backgroundType = BackgroundType.noBackground,
+    this.strokeColor = Colors.transparent,
+    this.strokeWidth = 0,
     bool locked = false,
     bool hidden = false,
     Set<ObjectDrawableAssist> assists = const <ObjectDrawableAssist>{},
-  })
-      : textPainter = TextPainter(
-    text: TextSpan(text: text, style: style),
-    textAlign: textAlign,
-    textScaler: TextScaler.linear(scale),
-    textDirection: direction,
-  ),
+  })  : textPainter = TextPainter(
+          text: TextSpan(text: text, style: style),
+          textAlign: textAlign,
+          textScaler: TextScaler.linear(scale),
+          textDirection: direction,
+        ),
         super(
-          position: position,
-          rotationAngle: rotation,
-          scale: scale,
-          assists: assists,
-          locked: locked,
-          hidden: hidden);
+            position: position,
+            rotationAngle: rotation,
+            scale: scale,
+            assists: assists,
+            locked: locked,
+            hidden: hidden);
 
   /// Draws the text on the provided [canvas] of size [size].
   @override
@@ -84,15 +89,16 @@ class TextDrawable extends ObjectDrawable {
     //
     // // final drawingPosition = position * scale - Offset(textPainter.width / 2, textPainter.height / 2);
 
-
     final maxTextWidth = size.width * scale;
     textPainter.layout(maxWidth: maxTextWidth);
 
 // Center the text properly
-    final drawingPosition = position * scale - Offset(textPainter.width / 2, textPainter.height / 2);
+    final drawingPosition = position * scale -
+        Offset(textPainter.width / 2, textPainter.height / 2);
 
 // Adjust the selection area to match the text's bounding box
-    final selectionOffset = Offset(textPainter.width / 2, textPainter.height / 2);
+    final selectionOffset =
+        Offset(textPainter.width / 2, textPainter.height / 2);
     final padding = 8.0;
 
     final lines = textPainter.computeLineMetrics();
@@ -121,10 +127,14 @@ class TextDrawable extends ObjectDrawable {
       );*/
 
       if (!backgroundType.isNoBackground) {
-        final rrect = RRect.fromRectAndRadius(
-            rect, Radius.circular(cornerRadius));
+        final rrect =
+            RRect.fromRectAndRadius(rect, Radius.circular(cornerRadius));
         final paint = Paint()
-          ..color = backgroundColor;
+          ..color = backgroundType.isStroke ? strokeColor : backgroundColor
+          ..style = backgroundType.isStroke
+              ? PaintingStyle.stroke
+              : PaintingStyle.fill;
+
         // ..style = PaintingStyle.stroke   // <-- Only stroke, no fill
         // ..strokeWidth = 2.0;
 
@@ -172,6 +182,8 @@ class TextDrawable extends ObjectDrawable {
     TextDirection? direction,
     BackgroundType? backgroundType,
     Color? backgroundColor,
+    Color? strokeColor,
+    double? strokeWidth,
   }) {
     return TextDrawable(
       text: text ?? this.text,
@@ -186,6 +198,8 @@ class TextDrawable extends ObjectDrawable {
       locked: locked ?? this.locked,
       backgroundType: backgroundType ?? this.backgroundType,
       backgroundColor: backgroundColor ?? this.backgroundColor,
+      strokeColor: strokeColor ?? this.strokeColor,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
     );
   }
 
@@ -197,7 +211,7 @@ class TextDrawable extends ObjectDrawable {
     return textPainter.size;
   }
 
-/// Compares two [TextDrawable]s for equality.
+  /// Compares two [TextDrawable]s for equality.
 // @override
 // bool operator ==(Object other) {
 //   return other is TextDrawable &&
