@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'dart:ui' as ui;
 import 'object_drawable.dart';
 
 enum BackgroundType {
@@ -120,7 +120,6 @@ class TextDrawable extends ObjectDrawable {
 // Adjust the selection area to match the text's bounding box
     final selectionOffset =
         Offset(textPainter.width / 2, textPainter.height / 2);
-    final padding = 8.0;
 
     final lines = textPainter.computeLineMetrics();
 
@@ -133,10 +132,10 @@ class TextDrawable extends ObjectDrawable {
 
       // Calculate full rect for the line
       final rect = Rect.fromLTWH(
-        drawingPosition.dx - padding,
-        drawingPosition.dy + lineYOffset - padding / 2,
-        lineWidth + padding * 2,
-        lineHeight + padding,
+        drawingPosition.dx - backgroundPadding,
+        drawingPosition.dy + lineYOffset - backgroundPadding / 2,
+        lineWidth + backgroundPadding * 2,
+        lineHeight + backgroundPadding,
       );
       /*  final rect = Rect.fromLTWH(
         drawingPosition.dx + line.left - padding,
@@ -154,7 +153,11 @@ class TextDrawable extends ObjectDrawable {
           ..color = backgroundType.isStroke ? strokeColor : backgroundColor
           ..style = backgroundType.isStroke
               ? PaintingStyle.stroke
-              : PaintingStyle.fill;
+              : PaintingStyle.fill
+          ..maskFilter = ui.MaskFilter.blur(
+            ui.BlurStyle.normal,
+            shadowBlurRadius,
+          );
 
         // ..style = PaintingStyle.stroke   // <-- Only stroke, no fill
         // ..strokeWidth = 2.0;
