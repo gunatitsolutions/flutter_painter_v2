@@ -118,8 +118,7 @@ class TextDrawable extends ObjectDrawable {
         Offset(textPainter.width / 2, textPainter.height / 2);
 
 // Adjust the selection area to match the text's bounding box
-    final selectionOffset =
-        Offset(textPainter.width / 2, textPainter.height / 2);
+    // final selectionOffset = Offset(textPainter.width / 2, textPainter.height / 2);
 
     final lines = textPainter.computeLineMetrics();
 
@@ -128,7 +127,7 @@ class TextDrawable extends ObjectDrawable {
     for (final line in lines) {
       final lineHeight = line.height;
       final lineWidth = line.width;
-      final baselineOffset = line.baseline - line.ascent;
+      //  final baselineOffset = line.baseline - line.ascent;
 
       // Calculate full rect for the line
       final rect = Rect.fromLTWH(
