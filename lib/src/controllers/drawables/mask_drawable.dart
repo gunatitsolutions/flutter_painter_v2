@@ -1,5 +1,4 @@
-import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:flutter_painter_v2/flutter_painter.dart';
 
 enum MaskType {
@@ -10,8 +9,8 @@ enum MaskType {
 
 class MaskDrawable extends ObjectDrawable {
   final MaskType maskType;
-  final ui.Image baseImage;
-  final ui.Image? maskImage;
+  final Image baseImage;
+  final Image? maskImage;
   final String? text;
   final TextStyle? textStyle;
 
@@ -25,44 +24,113 @@ class MaskDrawable extends ObjectDrawable {
     double rotation = 0.0,
     double scale = 1.0,
     bool hidden = false,
-    Set<ObjectDrawableAssist> assists = const {},
-    bool locked = false,
   }) : super(
     position: position,
     rotationAngle: rotation,
     scale: scale,
     hidden: hidden,
-    assists: assists,
-    locked: locked,
   );
 
+  // Main method to draw the object on the canvas
   @override
   void drawObject(Canvas canvas, Size size) {
-    final painter = MaskPainter(
-      type: maskType,
-      baseImage: baseImage,
-      maskImage: maskImage,
-      maskText: text,
-      textStyle: textStyle,
-    );
-    painter.paint(canvas, size);
+    // Define the source rect for the base image
+    final sourceRect = Rect.fromLTWH(0, 0, baseImage.width.toDouble(), baseImage.height.toDouble());
+
+    // Define the destination rect for the base image scaling
+    final destinationRect = Rect.fromLTWH(0, 0, size.width, size.height);
+
+    // Draw the base image onto the canvas using drawImageRect
+    canvas.drawImageRect(baseImage, sourceRect, destinationRect, Paint());
+
+    // Handle different MaskTypes
+    switch (maskType) {
+      case MaskType.imageWithTextMask:
+        if (maskImage != null && text != null && textStyle != null) {
+          // _drawImageWithTextMask(canvas, size, sourceRect, destinationRect);
+        }
+        break;
+      case MaskType.imageWithImageMask:
+        if (maskImage != null) {
+          canvas.drawImageRect(baseImage, sourceRect, destinationRect, Paint());
+
+          // Apply the image mask
+          if (maskImage != null) {
+            final maskPaint = Paint()..blendMode = BlendMode.dstIn;
+            canvas.drawImageRect(maskImage!, sourceRect, destinationRect, maskPaint);
+
+          }
+
+          // _drawImageWithImageMask(canvas, size, sourceRect, destinationRect);
+        }
+        break;
+      case MaskType.textWithImageFill:
+        if (text != null && textStyle != null) {
+        //  _drawTextWithImageFill(canvas, size, sourceRect, destinationRect);
+        }
+        break;
+    }
   }
 
-  @override
-  Size getSize({double minWidth = 0, double maxWidth = double.infinity}) {
-    return Size(
-      baseImage.width.toDouble(),
-      baseImage.height.toDouble(),
-    );
+  // Function to handle image with text mask
+  // void _drawImageWithTextMask(Canvas canvas, Size size, Rect sourceRect, Rect destinationRect) {
+  //   // Draw the base image first
+  //   canvas.drawImageRect(baseImage, sourceRect, destinationRect, Paint());
+  //
+  //   // Draw the text mask
+  //   final textPainter = TextPainter(
+  //     text: TextSpan(text: text, style: textStyle),
+  //     textDirection: TextDirection.ltr,
+  //   )..layout();
+  //
+  //   final offset = Offset(
+  //     (size.width - textPainter.width) / 2,
+  //     (size.height - textPainter.height) / 2,
+  //   );
+  //
+  //   final maskPaint = Paint()..blendMode = BlendMode.dstIn;
+  //   textPainter.paint(canvas, offset);
+  // }
+
+  // Function to handle image with image mask
+  void _drawImageWithImageMask(Canvas canvas, Size size, Rect sourceRect, Rect destinationRect) {
+    // Draw the base image first
+    canvas.drawImageRect(baseImage, sourceRect, destinationRect, Paint());
+
+    // Apply the image mask
+    if (maskImage != null) {
+      final maskPaint = Paint()..blendMode = BlendMode.dstIn;
+      canvas.drawImageRect(maskImage!, sourceRect, destinationRect, maskPaint);
+    }
   }
+
+  // Function to handle text with image fill
+  // void _drawTextWithImageFill(Canvas canvas, Size size, Rect sourceRect, Rect destinationRect) {
+  //   // Draw the base image first
+  //   canvas.drawImageRect(baseImage, sourceRect, destinationRect, Paint());
+  //
+  //   // Draw the text as a mask
+  //   final textPainter = TextPainter(
+  //     text: TextSpan(text: text, style: textStyle),
+  //     textDirection: TextDirection.ltr,
+  //   )..layout();
+  //
+  //   final offset = Offset(
+  //     (size.width - textPainter.width) / 2,
+  //     (size.height - textPainter.height) / 2,
+  //   );
+  //
+  //   final maskPaint = Paint()..blendMode = BlendMode.dstIn;
+  //   textPainter.paint(canvas, offset);
+  // }
 
   @override
   ObjectDrawable copyWith({
+    bool? hidden,
+    Set<ObjectDrawableAssist>? assists,
     Offset? position,
     double? rotation,
     double? scale,
-    bool? hidden,
-    Set<ObjectDrawableAssist>? assists,
     bool? locked,
   }) {
     return MaskDrawable(
@@ -75,112 +143,14 @@ class MaskDrawable extends ObjectDrawable {
       rotation: rotation ?? this.rotationAngle,
       scale: scale ?? this.scale,
       hidden: hidden ?? this.hidden,
-      assists: assists ?? this.assists,
-      locked: locked ?? this.locked,
     );
-  }
-}
-
-
-class MaskPainter extends CustomPainter {
-  final MaskType type;
-  final ui.Image? baseImage;
-  final ui.Image? maskImage;
-  final String? maskText;
-  final TextStyle? textStyle;
-
-  MaskPainter({
-    required this.type,
-    this.baseImage,
-    this.maskImage,
-    this.maskText,
-    this.textStyle,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) async {
-    switch (type) {
-      case MaskType.imageWithTextMask:
-        if (baseImage != null && maskText != null && textStyle != null) {
-          await _paintImageWithTextMask(canvas, size);
-        }
-        break;
-      case MaskType.imageWithImageMask:
-        if (baseImage != null && maskImage != null) {
-          await _paintImageWithImageMask(canvas, size);
-        }
-        break;
-      case MaskType.textWithImageFill:
-        if (baseImage != null && maskText != null && textStyle != null) {
-          await _paintTextWithImageFill(canvas, size);
-        }
-        break;
-    }
-  }
-
-  Future<void> _paintImageWithTextMask(Canvas canvas, Size size) async {
-    final recorder = ui.PictureRecorder();
-    final offCanvas = Canvas(recorder);
-
-    // Draw base image
-    offCanvas.drawImage(baseImage!, Offset.zero, Paint());
-
-    // Draw text mask
-    final textPainter = TextPainter(
-      text: TextSpan(text: maskText, style: textStyle),
-      textDirection: TextDirection.ltr,
-    )..layout();
-
-    final offset = Offset(
-      (size.width - textPainter.width) / 2,
-      (size.height - textPainter.height) / 2,
-    );
-
-    final maskPaint = Paint()..blendMode = BlendMode.dstIn;
-    textPainter.paint(offCanvas, offset);
-
-    final picture = recorder.endRecording();
-    final maskedImage = await picture.toImage(size.width.toInt(), size.height.toInt());
-    canvas.drawImage(maskedImage, Offset.zero, Paint());
-  }
-
-  Future<void> _paintImageWithImageMask(Canvas canvas, Size size) async {
-    final recorder = ui.PictureRecorder();
-    final offCanvas = Canvas(recorder);
-
-    offCanvas.drawImage(baseImage!, Offset.zero, Paint());
-    final maskPaint = Paint()..blendMode = BlendMode.dstIn;
-    offCanvas.drawImage(maskImage!, Offset.zero, maskPaint);
-
-    final picture = recorder.endRecording();
-    final maskedImage = await picture.toImage(size.width.toInt(), size.height.toInt());
-    canvas.drawImage(maskedImage, Offset.zero, Paint());
-  }
-
-  Future<void> _paintTextWithImageFill(Canvas canvas, Size size) async {
-    final recorder = ui.PictureRecorder();
-    final offCanvas = Canvas(recorder);
-
-    offCanvas.drawImage(baseImage!, Offset.zero, Paint());
-
-    final textPainter = TextPainter(
-      text: TextSpan(text: maskText, style: textStyle),
-      textDirection: TextDirection.ltr,
-    )..layout();
-
-    final offset = Offset(
-      (size.width - textPainter.width) / 2,
-      (size.height - textPainter.height) / 2,
-    );
-
-    final maskPaint = Paint()..blendMode = BlendMode.dstIn;
-    textPainter.paint(offCanvas, offset);
-
-    final picture = recorder.endRecording();
-    final maskedImage = await picture.toImage(size.width.toInt(), size.height.toInt());
-    canvas.drawImage(maskedImage, Offset.zero, Paint());
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  Size getSize({double minWidth = 0.0, double maxWidth = double.infinity}) {
+    return Size(
+      baseImage.width.toDouble(),
+      baseImage.height.toDouble(),
+    );
+  }
 }

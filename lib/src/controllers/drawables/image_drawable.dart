@@ -1,6 +1,4 @@
 import 'dart:ui';
-
-
 import 'object_drawable.dart';
 
 /// A drawable of an image as an object.
@@ -10,6 +8,8 @@ class ImageDrawable extends ObjectDrawable {
 
   /// Whether the image is flipped or not.
   final bool flipped;
+
+  final Path? clipPath;
 
   /// Creates an [ImageDrawable] with the given [image].
   ImageDrawable({
@@ -23,6 +23,7 @@ class ImageDrawable extends ObjectDrawable {
     bool hidden = false,
     required this.image,
     this.flipped = false,
+    this.clipPath,
   }) : super(
             position: position,
             rotationAngle: rotationAngle,
@@ -30,7 +31,7 @@ class ImageDrawable extends ObjectDrawable {
             assists: assists,
             assistPaints: assistPaints,
             hidden: hidden,
-            locked: locked);
+            locked: locked,);
 
   /// Creates an [ImageDrawable] with the given [image], and calculates the scale based on the given [size].
   /// The scale will be calculated such that the size of the drawable fits into the provided size.
@@ -69,7 +70,8 @@ class ImageDrawable extends ObjectDrawable {
       double? scale,
       Image? image,
       bool? flipped,
-      bool? locked}) {
+      bool? locked,
+      Path? clipPath,}) {
     return ImageDrawable(
       hidden: hidden ?? this.hidden,
       assists: assists ?? this.assists,
@@ -79,6 +81,7 @@ class ImageDrawable extends ObjectDrawable {
       image: image ?? this.image,
       flipped: flipped ?? this.flipped,
       locked: locked ?? this.locked,
+      clipPath: clipPath ?? this.clipPath,
     );
   }
 
@@ -90,6 +93,18 @@ class ImageDrawable extends ObjectDrawable {
     final position = this.position.scale(flipped ? -1 : 1, 1);
 
     if (flipped) canvas.scale(-1, 1);
+    canvas.save();
+    final paint = Paint()
+      ..color = Color.fromRGBO(10, 10, 10, 0.9) // Set the color for the path
+      ..style = PaintingStyle.fill; // Use fill style to color the path
+
+
+    // Apply clipping if clipPath is provided
+    if (clipPath != null) {
+      canvas.drawPath(clipPath!, paint);
+      // Assuming clipPath is relative to the drawable's local coordinate space centered at (0,0)
+      canvas.clipPath(clipPath!,doAntiAlias: true);
+    }
 
     // Draw the image onto the canvas.
     canvas.drawImageRect(
@@ -98,6 +113,9 @@ class ImageDrawable extends ObjectDrawable {
             Offset(image.width.toDouble(), image.height.toDouble())),
         Rect.fromPoints(position - scaledSize / 2, position + scaledSize / 2),
         Paint());
+
+     canvas.restore();
+
   }
 
   /// Calculates the size of the rendered object.

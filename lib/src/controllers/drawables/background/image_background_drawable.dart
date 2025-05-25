@@ -25,6 +25,7 @@ class ImageBackgroundDrawable extends BackgroundDrawable {
 
   final mt.BoxFit fit;
 
+
   /// Creates a [ImageBackgroundDrawable] to use an image as a background.
   const ImageBackgroundDrawable({
     required this.image,
