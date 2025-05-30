@@ -103,7 +103,70 @@ class TextDrawable extends ObjectDrawable {
   /// Draws the text on the provided [canvas] of size [size].
   @override
   void drawObject(Canvas canvas, Size size) {
-    // final maxTextWidth = size.width * scale;
+    // Layout text with scaled max width
+    final maxTextWidth = size.width;
+    textPainter.layout(maxWidth: maxTextWidth);
+
+    // Compute full text block size
+    final lines = textPainter.computeLineMetrics();
+    final totalHeight = lines.fold(0.0, (sum, line) => sum + line.height);
+    final totalWidth = textPainter.width;
+
+    // Apply scaling to size and padding
+    final scaledPadding = backgroundPadding * scale;
+    final scaledCornerRadius = cornerRadius * scale;
+
+    final centeredPosition = position -
+        Offset((totalWidth + scaledPadding * 2) / 2, (totalHeight + scaledPadding) / 2);
+
+    // Save the canvas state
+    canvas.save();
+
+    // Apply scale and move canvas to final drawing origin
+    canvas.translate(centeredPosition.dx * scale, centeredPosition.dy * scale);
+    canvas.scale(scale);
+
+    double yOffset = 0.0;
+    for (final line in lines) {
+      final lineHeight = line.height;
+      final lineWidth = line.width;
+
+      final rect = Rect.fromLTWH(
+        0,
+        yOffset,
+        lineWidth + scaledPadding * 2 / scale, // Remove extra scaling here
+        lineHeight + scaledPadding / scale,
+      );
+
+      if (!backgroundType.isNoBackground) {
+        final rrect = RRect.fromRectAndRadius(rect, Radius.circular(scaledCornerRadius / scale));
+        final paint = Paint()
+          ..color = backgroundType.isStroke ? strokeColor : backgroundColor
+          ..style = backgroundType.isStroke ? PaintingStyle.stroke : PaintingStyle.fill;
+
+        if (backgroundType.isSlant) {
+          const slant = 10.0;
+          final path = Path()
+            ..moveTo(rrect.left + slant, rrect.top)
+            ..lineTo(rrect.right, rrect.top)
+            ..lineTo(rrect.right - slant, rrect.bottom)
+            ..lineTo(rrect.left, rrect.bottom)
+            ..close();
+          canvas.drawPath(path, paint);
+        } else {
+          canvas.drawRRect(rrect, paint);
+        }
+      }
+
+      yOffset += lineHeight;
+    }
+
+    // Draw the text itself (shifted by padding)
+    textPainter.paint(canvas, Offset(scaledPadding / scale, 0));
+
+    // Restore the canvas
+    canvas.restore();
+  /*  // final maxTextWidth = size.width * scale;
     // textPainter.layout(maxWidth: maxTextWidth);
     //
     // final drawingPosition = position * scale;
@@ -187,7 +250,7 @@ class TextDrawable extends ObjectDrawable {
     // Paint the text on the canvas
     // It is shifted back by half of its width and height to be drawn in the center
     textPainter.paint(canvas,
-        drawingPosition - Offset(textPainter.width / 2, textPainter.height / 2));*/
+        drawingPosition - Offset(textPainter.width / 2, textPainter.height / 2));*/*/
   }
 
   /// Creates a copy of this but with the given fields replaced with the new values.
