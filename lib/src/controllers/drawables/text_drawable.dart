@@ -104,7 +104,69 @@ class TextDrawable extends ObjectDrawable {
   @override
   void drawObject(Canvas canvas, Size size) {
     // Layout text with scaled max width
-    final maxTextWidth = size.width;
+   /* textPainter.layout(maxWidth: size.width * scale);
+
+    // Paint the text on the canvas
+    // It is shifted back by half of its width and height to be drawn in the center
+    textPainter.paint(canvas,
+        position - Offset(textPainter.width / 2, textPainter.height / 2));*/
+
+    textPainter.layout(maxWidth: size.width * scale);
+    final Offset drawOffset =
+        position - Offset(textPainter.width / 2, textPainter.height / 2);
+
+    final Rect textRect = drawOffset & textPainter.size;
+    final Rect paddedRect = textRect.inflate(backgroundPadding);
+
+    if (backgroundType.isRect || backgroundType.isStroke || backgroundType.isSlant) {
+      final RRect background = RRect.fromRectAndRadius(
+        paddedRect,
+        Radius.circular(cornerRadius),
+      );
+
+      final Paint bgPaint = Paint()..color = backgroundColor;
+
+      if (enableShadow) {
+        canvas.drawShadow(Path()..addRRect(background), shadowColor, shadowBlurRadius, true);
+      }
+
+      if (backgroundType.isSlant) {
+        final Path slantPath = Path()
+          ..moveTo(paddedRect.left, paddedRect.top + 20)
+          ..lineTo(paddedRect.left + 20, paddedRect.top)
+          ..lineTo(paddedRect.right, paddedRect.top)
+          ..lineTo(paddedRect.right, paddedRect.bottom - 20)
+          ..lineTo(paddedRect.right - 20, paddedRect.bottom)
+          ..lineTo(paddedRect.left, paddedRect.bottom)
+          ..close();
+        canvas.drawPath(slantPath, bgPaint);
+      } else {
+        canvas.drawRRect(background, bgPaint);
+      }
+
+      if (enableStroke || backgroundType.isStroke) {
+        final Paint strokePaint = Paint()
+          ..color = strokeColor
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth;
+        if (backgroundType.isSlant) {
+          final Path slantPath = Path()
+            ..moveTo(paddedRect.left, paddedRect.top + 20)
+            ..lineTo(paddedRect.left + 20, paddedRect.top)
+            ..lineTo(paddedRect.right, paddedRect.top)
+            ..lineTo(paddedRect.right, paddedRect.bottom - 20)
+            ..lineTo(paddedRect.right - 20, paddedRect.bottom)
+            ..lineTo(paddedRect.left, paddedRect.bottom)
+            ..close();
+          canvas.drawPath(slantPath, strokePaint);
+        } else {
+          canvas.drawRRect(background, strokePaint);
+        }
+      }
+    }
+
+    textPainter.paint(canvas, drawOffset);
+   /* final maxTextWidth = size.width;
     textPainter.layout(maxWidth: maxTextWidth);
 
     // Compute full text block size
@@ -165,7 +227,7 @@ class TextDrawable extends ObjectDrawable {
     textPainter.paint(canvas, Offset(scaledPadding / scale, 0));
 
     // Restore the canvas
-    canvas.restore();
+    canvas.restore();*/
   /*  // final maxTextWidth = size.width * scale;
     // textPainter.layout(maxWidth: maxTextWidth);
     //

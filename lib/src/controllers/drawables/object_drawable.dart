@@ -121,7 +121,6 @@ abstract class ObjectDrawable extends Drawable {
     // Translate and rotate the canvas according to the position of the object
     canvas.translate(position.dx, position.dy);
     canvas.rotate(rotationAngle);
-    canvas.scale(scale);
     canvas.translate(-position.dx, -position.dy);
 
     // Draw the object
