@@ -69,6 +69,7 @@ class ImageDrawable extends ObjectDrawable {
     bool hidden = false,
     required Image image,
     bool flipped = false,
+    String? id,
   }) : this(
           position: position,
           rotationAngle: rotationAngle,
@@ -79,6 +80,7 @@ class ImageDrawable extends ObjectDrawable {
           flipped: flipped,
           hidden: hidden,
           locked: locked,
+          id: id,
         );
 
   /// Creates a copy of this but with the given fields replaced with the new values.
@@ -127,7 +129,8 @@ class ImageDrawable extends ObjectDrawable {
     if (flipped) canvas.scale(-1, 1);
     canvas.save();
     final paint = Paint()
-      ..color = const Color.fromRGBO(10, 10, 10, 0.9) // Set the color for the path
+      ..color =
+          const Color.fromRGBO(10, 10, 10, 0.9) // Set the color for the path
       ..filterQuality = filterQuality
       ..style = PaintingStyle.fill
       ..strokeWidth = 10.0;
