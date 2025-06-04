@@ -12,6 +12,8 @@ class OvalDrawable extends Sized2DDrawable implements ShapeDrawable {
   @override
   Paint paint;
 
+  @override
+  String? id;
   /// Creates a new [OvalDrawable] with the given [size] and [paint].
   OvalDrawable({
     Paint? paint,
@@ -24,6 +26,7 @@ class OvalDrawable extends Sized2DDrawable implements ShapeDrawable {
         const <ObjectDrawableAssist, Paint>{},
     bool locked = false,
     bool hidden = false,
+    this.id,
   })  : paint = paint ?? ShapeDrawable.defaultPaint,
         super(
             size: size,
@@ -66,6 +69,7 @@ class OvalDrawable extends Sized2DDrawable implements ShapeDrawable {
     Size? size,
     Paint? paint,
     bool? locked,
+    String? id,
   }) {
     return OvalDrawable(
       hidden: hidden ?? this.hidden,
@@ -76,6 +80,7 @@ class OvalDrawable extends Sized2DDrawable implements ShapeDrawable {
       size: size ?? this.size,
       locked: locked ?? this.locked,
       paint: paint ?? this.paint,
+      id: id ?? this.id,
     );
   }
 

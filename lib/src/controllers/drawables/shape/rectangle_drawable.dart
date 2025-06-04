@@ -16,6 +16,9 @@ class RectangleDrawable extends Sized2DDrawable implements ShapeDrawable {
   /// The default value is a circular radius of 5 on all corners.
   BorderRadius borderRadius;
 
+  @override
+  String? id;
+
   /// Creates a new [RectangleDrawable] with the given [size], [paint] and [borderRadius].
   RectangleDrawable({
     Paint? paint,
@@ -28,6 +31,7 @@ class RectangleDrawable extends Sized2DDrawable implements ShapeDrawable {
         const <ObjectDrawableAssist, Paint>{},
     bool locked = false,
     bool hidden = false,
+    this.id,
     this.borderRadius = const BorderRadius.all(Radius.circular(5)),
   })  : paint = paint ?? ShapeDrawable.defaultPaint,
         super(
@@ -78,6 +82,7 @@ class RectangleDrawable extends Sized2DDrawable implements ShapeDrawable {
     Paint? paint,
     bool? locked,
     BorderRadius? borderRadius,
+    String? id,
   }) {
     return RectangleDrawable(
       hidden: hidden ?? this.hidden,
@@ -89,6 +94,7 @@ class RectangleDrawable extends Sized2DDrawable implements ShapeDrawable {
       paint: paint ?? this.paint,
       locked: locked ?? this.locked,
       borderRadius: borderRadius ?? this.borderRadius,
+      id: id ?? this.id,
     );
   }
 

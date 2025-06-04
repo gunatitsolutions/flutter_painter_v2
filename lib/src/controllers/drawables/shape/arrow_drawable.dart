@@ -13,6 +13,10 @@ class ArrowDrawable extends Sized1DDrawable implements ShapeDrawable {
   @override
   Paint paint;
 
+  @override
+  String? id;
+
+
   /// The size of the arrow head.
   ///
   /// If null, the arrow head size will be 3 times the [paint] strokeWidth.
@@ -31,6 +35,7 @@ class ArrowDrawable extends Sized1DDrawable implements ShapeDrawable {
         const <ObjectDrawableAssist, Paint>{},
     bool locked = false,
     bool hidden = false,
+    this.id,
   })  : paint = paint ?? ShapeDrawable.defaultPaint,
         super(
             length: length,
@@ -93,6 +98,7 @@ class ArrowDrawable extends Sized1DDrawable implements ShapeDrawable {
     Paint? paint,
     bool? locked,
     double? arrowHeadSize,
+    String? id,
   }) {
     return ArrowDrawable(
       hidden: hidden ?? this.hidden,
@@ -104,6 +110,7 @@ class ArrowDrawable extends Sized1DDrawable implements ShapeDrawable {
       paint: paint ?? this.paint,
       locked: locked ?? this.locked,
       arrowHeadSize: arrowHeadSize ?? this.arrowHeadSize,
+      id: id ?? this.id,
     );
   }
 

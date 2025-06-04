@@ -9,6 +9,9 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
   @override
   Paint paint;
 
+  @override
+  String? id;
+
   CustomPathDrawable({
     required this.originalPath,
     required Offset position,
@@ -20,6 +23,7 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
     Map<ObjectDrawableAssist, Paint> assistPaints = const {},
     bool locked = false,
     bool hidden = false,
+    this.id,
   })  : paint = paint ?? ShapeDrawable.defaultPaint,
         super(
           size: size,
@@ -43,18 +47,20 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
     bool? locked,
     bool? hidden,
     Size? size,
+    String? id,
   }) {
     return CustomPathDrawable(
-      originalPath: originalPath,
-      position: position ?? this.position,
-      rotationAngle: rotation ?? this.rotationAngle,
-      scale: scale ?? this.scale,
-      paint: paint ?? this.paint,
-      assists: assists ?? this.assists,
-      assistPaints: assistPaints ?? this.assistPaints,
-      locked: locked ?? this.locked,
-      hidden: hidden ?? this.hidden, size: size ?? this.size,
-    );
+        originalPath: originalPath,
+        position: position ?? this.position,
+        rotationAngle: rotation ?? this.rotationAngle,
+        scale: scale ?? this.scale,
+        paint: paint ?? this.paint,
+        assists: assists ?? this.assists,
+        assistPaints: assistPaints ?? this.assistPaints,
+        locked: locked ?? this.locked,
+        hidden: hidden ?? this.hidden,
+        size: size ?? this.size,
+        id: id ?? this.id);
   }
 
   @override
@@ -68,7 +74,6 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
     );
     return scaled;
   }
-
 
   @override
   void drawObject(Canvas canvas, Size size) {

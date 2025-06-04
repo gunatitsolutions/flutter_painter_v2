@@ -13,7 +13,7 @@ abstract class ShapeDrawable extends ObjectDrawable {
 
   /// The paint to be used for the shape drawable.
   Paint paint;
-
+  String? id;
   /// Default constructor for [ObjectDrawable].
   ShapeDrawable({
     Paint? paint,
@@ -25,6 +25,7 @@ abstract class ShapeDrawable extends ObjectDrawable {
         const <ObjectDrawableAssist, Paint>{},
     bool locked = false,
     bool hidden = false,
+    this.id,
   })  : paint = paint ?? defaultPaint,
         super(
             position: position,
@@ -33,7 +34,8 @@ abstract class ShapeDrawable extends ObjectDrawable {
             assists: assists,
             assistPaints: assistPaints,
             locked: locked,
-            hidden: hidden);
+            hidden: hidden,
+        );
 
   /// Creates a copy of this but with the given fields replaced with the new values.
   @override
@@ -45,5 +47,6 @@ abstract class ShapeDrawable extends ObjectDrawable {
     double? scale,
     Paint? paint,
     bool? locked,
+    String? id,
   });
 }

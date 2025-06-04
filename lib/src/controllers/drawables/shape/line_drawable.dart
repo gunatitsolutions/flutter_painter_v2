@@ -12,6 +12,9 @@ class LineDrawable extends Sized1DDrawable implements ShapeDrawable {
   @override
   Paint paint;
 
+  @override
+  String? id;
+
   /// Creates a new [LineDrawable] with the given [length] and [paint].
   LineDrawable({
     Paint? paint,
@@ -24,6 +27,7 @@ class LineDrawable extends Sized1DDrawable implements ShapeDrawable {
         const <ObjectDrawableAssist, Paint>{},
     bool locked = false,
     bool hidden = false,
+    this.id,
   })  : paint = paint ?? ShapeDrawable.defaultPaint,
         super(
             length: length,
@@ -60,6 +64,7 @@ class LineDrawable extends Sized1DDrawable implements ShapeDrawable {
     double? length,
     Paint? paint,
     bool? locked,
+    String? id,
   }) {
     return LineDrawable(
       hidden: hidden ?? this.hidden,
@@ -70,6 +75,7 @@ class LineDrawable extends Sized1DDrawable implements ShapeDrawable {
       length: length ?? this.length,
       paint: paint ?? this.paint,
       locked: locked ?? this.locked,
+      id: id ?? this.id,
     );
   }
 
