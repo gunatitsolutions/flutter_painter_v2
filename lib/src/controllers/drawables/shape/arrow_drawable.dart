@@ -1,5 +1,6 @@
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import '../object_drawable.dart';
@@ -16,6 +17,27 @@ class ArrowDrawable extends Sized1DDrawable implements ShapeDrawable {
   @override
   String? id;
 
+  final Color backgroundColor;
+
+  final double cornerRadius;
+
+  final Color strokeColor;
+
+  final double strokeWidth;
+
+  final bool enableStroke;
+
+  final bool enableShadow;
+
+  final Color shadowColor;
+
+  final double shadowBlurRadius;
+
+  final Offset shadowOffset;
+
+  /// The border radius of the rectangle.
+  /// The default value is a circular radius of 5 on all corners.
+  BorderRadius borderRadius;
 
   /// The size of the arrow head.
   ///
@@ -35,6 +57,16 @@ class ArrowDrawable extends Sized1DDrawable implements ShapeDrawable {
         const <ObjectDrawableAssist, Paint>{},
     bool locked = false,
     bool hidden = false,
+    this.backgroundColor = Colors.black,
+    this.cornerRadius = 0,
+    this.strokeColor = Colors.transparent,
+    this.shadowOffset = Offset.zero,
+    this.enableStroke = false,
+    this.enableShadow = false,
+    this.shadowBlurRadius = 0,
+    this.shadowColor = Colors.transparent,
+    this.strokeWidth = 0.0,
+    this.borderRadius =  BorderRadius.zero,
     this.id,
   })  : paint = paint ?? ShapeDrawable.defaultPaint,
         super(
@@ -99,6 +131,16 @@ class ArrowDrawable extends Sized1DDrawable implements ShapeDrawable {
     bool? locked,
     double? arrowHeadSize,
     String? id,
+    BorderRadius? borderRadius,
+    Color? backgroundColor,
+    double? cornerRadius,
+    Color? strokeColor,
+    double? strokeWidth,
+    bool? enableStroke,
+    bool? enableShadow,
+    Color? shadowColor,
+    double? shadowBlurRadius,
+    Offset? shadowOffset,
   }) {
     return ArrowDrawable(
       hidden: hidden ?? this.hidden,
@@ -111,6 +153,16 @@ class ArrowDrawable extends Sized1DDrawable implements ShapeDrawable {
       locked: locked ?? this.locked,
       arrowHeadSize: arrowHeadSize ?? this.arrowHeadSize,
       id: id ?? this.id,
+      borderRadius: borderRadius ?? this.borderRadius,
+      backgroundColor: backgroundColor ?? this.backgroundColor,
+      cornerRadius: cornerRadius ?? this.cornerRadius,
+      strokeColor: strokeColor ?? this.strokeColor,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+      enableStroke: enableStroke ?? this.enableStroke,
+      enableShadow: enableShadow ?? this.enableShadow,
+      shadowColor: shadowColor ?? this.shadowColor,
+      shadowBlurRadius: shadowBlurRadius ?? this.shadowBlurRadius,
+      shadowOffset: shadowOffset ?? this.shadowOffset,
     );
   }
 
