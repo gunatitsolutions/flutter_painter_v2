@@ -84,12 +84,27 @@ class OvalDrawable extends Sized2DDrawable implements ShapeDrawable {
   void drawObject(Canvas canvas, Size size) {
     final drawingSize = this.size * scale;
     final drawingPosition = position * scale;
-    canvas.drawOval(
-        Rect.fromCenter(
-            center: drawingPosition,
-            width: drawingSize.width,
-            height: drawingSize.height),
-        paint);
+    final oval = Rect.fromCenter(
+        center: drawingPosition,
+        width: drawingSize.width,
+        height: drawingSize.height);
+
+
+    if (backgroundColor.alpha != 0) {
+      final paint = Paint()
+        ..color = backgroundColor
+        ..style = PaintingStyle.fill;
+      canvas.drawOval(oval, paint);
+    }
+
+    // 2. Stroke
+    if (strokeWidth > 0 && strokeColor.alpha != 0) {
+      final paint = Paint()
+        ..color = strokeColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth;
+      canvas.drawOval(oval, paint);
+    }
   }
 
   /// Creates a copy of this but with the given fields replaced with the new values.

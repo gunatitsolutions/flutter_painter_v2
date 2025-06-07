@@ -84,18 +84,34 @@ class RectangleDrawable extends Sized2DDrawable implements ShapeDrawable {
   void drawObject(Canvas canvas, Size size) {
     final drawingSize = this.size * scale;
     final drawingPosition = position * scale;
-    canvas.drawRRect(
-        RRect.fromRectAndCorners(
-          Rect.fromCenter(
-              center: drawingPosition,
-              width: drawingSize.width,
-              height: drawingSize.height),
-          topLeft: borderRadius.topLeft,
-          topRight: borderRadius.topRight,
-          bottomLeft: borderRadius.bottomLeft,
-          bottomRight: borderRadius.bottomRight,
-        ),
-        paint);
+
+    final canvasRect =  RRect.fromRectAndCorners(
+      Rect.fromCenter(
+          center: drawingPosition,
+          width: drawingSize.width,
+          height: drawingSize.height),
+      topLeft: borderRadius.topLeft,
+      topRight: borderRadius.topRight,
+      bottomLeft: borderRadius.bottomLeft,
+      bottomRight: borderRadius.bottomRight,
+    );
+
+    if (backgroundColor.alpha != 0) {
+      final paint = Paint()
+        ..color = backgroundColor
+        ..style = PaintingStyle.fill;
+      canvas.drawRRect(canvasRect, paint);
+    }
+
+    // 2. Stroke
+    if (strokeWidth > 0 && strokeColor.alpha != 0) {
+      final paint = Paint()
+        ..color = strokeColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth;
+      canvas.drawRRect(canvasRect, paint);
+    }
+
   }
 
   /// Creates a copy of this but with the given fields replaced with the new values.

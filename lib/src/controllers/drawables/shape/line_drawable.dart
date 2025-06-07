@@ -82,8 +82,27 @@ class LineDrawable extends Sized1DDrawable implements ShapeDrawable {
   /// Draws the line on the provided [canvas] of size [size].
   @override
   void drawObject(Canvas canvas, Size size) {
-    canvas.drawLine(position.translate(-length / 2 * scale, 0),
-        position.translate(length / 2 * scale, 0), paint);
+
+
+    if (backgroundColor.alpha != 0) {
+      final paint = Paint()
+        ..color = backgroundColor
+        ..style = PaintingStyle.fill;
+      canvas.drawLine(position.translate(-length / 2 * scale, 0),
+          position.translate(length / 2 * scale, 0), paint);
+
+    }
+
+    // 2. Stroke
+    if (strokeWidth > 0 && strokeColor.alpha != 0) {
+      final paint = Paint()
+        ..color = strokeColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth;
+      canvas.drawLine(position.translate(-length / 2 * scale, 0),
+          position.translate(length / 2 * scale, 0), paint);
+
+    }
   }
 
   /// Creates a copy of this but with the given fields replaced with the new values.

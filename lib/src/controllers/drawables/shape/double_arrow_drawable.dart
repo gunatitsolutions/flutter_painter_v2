@@ -120,7 +120,23 @@ class DoubleArrowDrawable extends Sized1DDrawable implements ShapeDrawable {
       style: PaintingStyle.fill,
     );
 
-    canvas.drawPath(path, headPaint);
+
+    if (backgroundColor.alpha != 0) {
+      final paint = Paint()
+        ..color = backgroundColor
+        ..style = PaintingStyle.fill;
+      canvas.drawPath(path, paint);
+    }
+
+    // 2. Stroke
+    if (strokeWidth > 0 && strokeColor.alpha != 0) {
+      final paint = Paint()
+        ..color = strokeColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth;
+      canvas.drawPath(path, paint);
+    }
+
   }
 
   /// Creates a copy of this but with the given fields replaced with the new values.

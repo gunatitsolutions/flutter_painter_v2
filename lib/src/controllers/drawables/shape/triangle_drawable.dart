@@ -88,7 +88,22 @@ class TriangleDrawable extends Sized2DDrawable implements ShapeDrawable {
       ..lineTo(drawingPosition.dx + halfWidth, drawingPosition.dy + halfHeight) // bottom-right
       ..close();
 
-    canvas.drawPath(path, paint);
+
+    if (backgroundColor.alpha != 0) {
+      final paint = Paint()
+        ..color = backgroundColor
+        ..style = PaintingStyle.fill;
+      canvas.drawPath(path, paint);
+    }
+
+    // 2. Stroke
+    if (strokeWidth > 0 && strokeColor.alpha != 0) {
+      final paint = Paint()
+        ..color = strokeColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth;
+      canvas.drawPath(path, paint);
+    }
   }
 
   @override
