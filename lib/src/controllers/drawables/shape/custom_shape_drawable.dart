@@ -1,8 +1,6 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_painter_v2/src/controllers/drawables/sized2ddrawable.dart';
 import '../../../../flutter_painter.dart';
-import '../sized1ddrawable.dart';
 
 class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
   final Path originalPath;
@@ -12,11 +10,38 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
   @override
   String? id;
 
+  final Color backgroundColor;
+
+  final double cornerRadius;
+
+  final Color strokeColor;
+
+  final double strokeWidth;
+
+  final bool enableStroke;
+
+  final bool enableShadow;
+
+  final Color shadowColor;
+
+  final double shadowBlurRadius;
+
+  final Offset shadowOffset;
+
   CustomPathDrawable({
     required this.originalPath,
     required Offset position,
     required Size size,
     Paint? paint,
+    this.backgroundColor = Colors.black,
+    this.cornerRadius = 0,
+    this.strokeColor = Colors.transparent,
+    this.shadowOffset = Offset.zero,
+    this.enableStroke = false,
+    this.enableShadow = false,
+    this.shadowBlurRadius = 0,
+    this.shadowColor = Colors.transparent,
+    this.strokeWidth = 0.0,
     double rotationAngle = 0,
     double scale = 1,
     Set<ObjectDrawableAssist> assists = const {},
@@ -48,19 +73,38 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
     bool? hidden,
     Size? size,
     String? id,
+    Color? backgroundColor,
+    double? cornerRadius,
+    Color? strokeColor,
+    double? strokeWidth,
+    bool? enableStroke,
+    bool? enableShadow,
+    Color? shadowColor,
+    double? shadowBlurRadius,
+    Offset? shadowOffset,
   }) {
     return CustomPathDrawable(
-        originalPath: originalPath,
-        position: position ?? this.position,
-        rotationAngle: rotation ?? this.rotationAngle,
-        scale: scale ?? this.scale,
-        paint: paint ?? this.paint,
-        assists: assists ?? this.assists,
-        assistPaints: assistPaints ?? this.assistPaints,
-        locked: locked ?? this.locked,
-        hidden: hidden ?? this.hidden,
-        size: size ?? this.size,
-        id: id ?? this.id);
+      originalPath: originalPath,
+      position: position ?? this.position,
+      rotationAngle: rotation ?? this.rotationAngle,
+      scale: scale ?? this.scale,
+      paint: paint ?? this.paint,
+      assists: assists ?? this.assists,
+      assistPaints: assistPaints ?? this.assistPaints,
+      locked: locked ?? this.locked,
+      hidden: hidden ?? this.hidden,
+      size: size ?? this.size,
+      id: id ?? this.id,
+      backgroundColor: backgroundColor ?? this.backgroundColor,
+      cornerRadius: cornerRadius ?? this.cornerRadius,
+      strokeColor: strokeColor ?? this.strokeColor,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+      enableStroke: enableStroke ?? this.enableStroke,
+      enableShadow: enableShadow ?? this.enableShadow,
+      shadowColor: shadowColor ?? this.shadowColor,
+      shadowBlurRadius: shadowBlurRadius ?? this.shadowBlurRadius,
+      shadowOffset: shadowOffset ?? this.shadowOffset,
+    );
   }
 
   @override
@@ -81,14 +125,95 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
 
     canvas.save();
 
+    // Apply overall transformations
+    canvas.translate(position.dx, position.dy);
+    canvas.rotate(rotationAngle);
+    canvas.scale(scale);
+
+    // Step 1: Get original path bounds
+    final bounds = originalPath.getBounds();
+
+    // Step 2: Shift the path to center it at (0, 0)
+    final centeredPath = originalPath.shift(-bounds.center);
+
+    // Optional: Draw shadow
+    if (enableShadow) {
+      final shadowPaint = Paint()
+        ..color = shadowColor
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, shadowBlurRadius);
+
+      canvas.drawPath(centeredPath.shift(shadowOffset), shadowPaint);
+    }
+
+    // Fill (background color)
+    final fillPaint = Paint()
+      ..color = backgroundColor
+      ..style = PaintingStyle.fill;
+
+    canvas.drawPath(centeredPath, fillPaint);
+
+    // Stroke
+    if (enableStroke && strokeWidth > 0) {
+      final strokePaint = Paint()
+        ..color = strokeColor
+        ..strokeWidth = strokeWidth
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round;
+
+      canvas.drawPath(centeredPath, strokePaint);
+    }
+
+    canvas.restore();
+   /* if (hidden) return;
+
+    canvas.save();
+
     // Apply transform: translate -> rotate -> scale
     canvas.translate(position.dx, position.dy);
     canvas.rotate(rotationAngle);
     canvas.scale(scale);
 
-    // Draw original path from origin
-    canvas.drawPath(originalPath, paint);
+    // Draw shadow if enabled
+    if (enableShadow) {
+      final shadowPaint = Paint()
+        ..color = shadowColor
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, shadowBlurRadius);
 
-    canvas.restore();
+      final shadowPath = originalPath.shift(shadowOffset);
+      canvas.drawPath(shadowPath, shadowPaint);
+    }
+
+    // Draw fill (background color)
+    final fillPaint = Paint()
+      ..color = backgroundColor
+      ..style = PaintingStyle.fill;
+
+    canvas.drawPath(originalPath, fillPaint);
+
+    // Draw stroke if enabled
+    if (enableStroke && strokeWidth > 0) {
+      final strokePaint = Paint()
+        ..color = strokeColor
+        ..strokeWidth = strokeWidth
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round;
+
+      canvas.drawPath(originalPath, strokePaint);
+    }
+
+    canvas.restore();*/
+    // if (hidden) return;
+    //
+    // canvas.save();
+    //
+    // // Apply transform: translate -> rotate -> scale
+    // canvas.translate(position.dx, position.dy);
+    // canvas.rotate(rotationAngle);
+    // canvas.scale(scale);
+    //
+    // // Draw original path from origin
+    // canvas.drawPath(originalPath, paint);
+    //
+    // canvas.restore();
   }
 }
