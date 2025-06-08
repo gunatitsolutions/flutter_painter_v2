@@ -82,21 +82,60 @@ class PolygonDrawable extends Sized2DDrawable implements ShapeDrawable {
   void drawObject(Canvas canvas, Size canvasSize) {
     final drawingSize = size * scale;
     final drawingPosition = position * scale;
-    final radius = math.min(drawingSize.width, drawingSize.height) / 2;
+    final center = position * scale;
+    // final radius = math.min(drawingSize.width, drawingSize.height) / 2;
+    //
+    // final angleStep = (2 * math.pi) / sides;
+    //
+    // final path = Path();
+    // for (int i = 0; i < sides; i++) {
+    //   final angle = angleStep * i - math.pi / 2 + rotationAngle;
+    //   final x = drawingPosition.dx + radius * math.cos(angle);
+    //   final y = drawingPosition.dy + radius * math.sin(angle);
+    //   if (i == 0) {
+    //     path.moveTo(x, y);
+    //   } else {
+    //     path.lineTo(x, y);
+    //   }
+    // }
+    // path.close();
 
+    final radius = math.min(drawingSize.width, drawingSize.height) / 2;
     final angleStep = (2 * math.pi) / sides;
 
-    final path = Path();
-    for (int i = 0; i < sides; i++) {
+    final List<Offset> points = List.generate(sides, (i) {
       final angle = angleStep * i - math.pi / 2 + rotationAngle;
-      final x = drawingPosition.dx + radius * math.cos(angle);
-      final y = drawingPosition.dy + radius * math.sin(angle);
+      return Offset(
+        center.dx + radius * math.cos(angle),
+        center.dy + radius * math.sin(angle),
+      );
+    });
+
+    final path = Path();
+    for (int i = 0; i < points.length; i++) {
+      final current = points[i];
+      final next = points[(i + 1) % points.length];
+      final prev = points[(i - 1 + points.length) % points.length];
+
+      final toPrev = (current - prev).direction;
+      final toNext = (next - current).direction;
+
+      final offset1 = current + Offset.fromDirection(toPrev, cornerRadius);
+      final offset2 = current + Offset.fromDirection(toNext, cornerRadius);
+
       if (i == 0) {
-        path.moveTo(x, y);
+        path.moveTo(offset1.dx, offset1.dy);
       } else {
-        path.lineTo(x, y);
+        path.lineTo(offset1.dx, offset1.dy);
       }
+
+      path.arcToPoint(
+        offset2,
+        radius: Radius.circular(cornerRadius),
+        clockwise: true,
+      );
     }
+
     path.close();
     if (backgroundColor.alpha != 0) {
       final paint = Paint()

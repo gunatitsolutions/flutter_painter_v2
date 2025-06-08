@@ -1,7 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-
 import '../object_drawable.dart';
 import 'shape_drawable.dart';
 import '../sized2ddrawable.dart';
@@ -82,12 +79,27 @@ class TriangleDrawable extends Sized2DDrawable implements ShapeDrawable {
     final halfWidth = drawingSize.width / 2;
     final halfHeight = drawingSize.height / 2;
 
-    final path = Path()
-      ..moveTo(drawingPosition.dx, drawingPosition.dy - halfHeight) // top
-      ..lineTo(drawingPosition.dx - halfWidth, drawingPosition.dy + halfHeight) // bottom-left
-      ..lineTo(drawingPosition.dx + halfWidth, drawingPosition.dy + halfHeight) // bottom-right
-      ..close();
+    // final path = Path()
+    //   ..moveTo(drawingPosition.dx, drawingPosition.dy - halfHeight) // top
+    //   ..lineTo(drawingPosition.dx - halfWidth, drawingPosition.dy + halfHeight) // bottom-left
+    //   ..lineTo(drawingPosition.dx + halfWidth, drawingPosition.dy + halfHeight) // bottom-right
+    //   ..close();
+    final top = Offset(drawingPosition.dx, drawingPosition.dy - halfHeight);
+    final left = Offset(drawingPosition.dx - halfWidth, drawingPosition.dy + halfHeight);
+    final right = Offset(drawingPosition.dx + halfWidth, drawingPosition.dy + halfHeight);
 
+    final path = Path();
+
+    // Midpoints for curves
+    final midLeftTop = Offset.lerp(left, top, 0.5)!;
+    final midTopRight = Offset.lerp(top, right, 0.5)!;
+    final midRightLeft = Offset.lerp(right, left, 0.5)!;
+
+    path.moveTo(midLeftTop.dx, midLeftTop.dy);
+    path.quadraticBezierTo(left.dx, left.dy, midRightLeft.dx, midRightLeft.dy);
+    path.quadraticBezierTo(right.dx, right.dy, midTopRight.dx, midTopRight.dy);
+    path.quadraticBezierTo(top.dx, top.dy, midLeftTop.dx, midLeftTop.dy);
+    path.close();
 
     if (backgroundColor.alpha != 0) {
       final paint = Paint()
@@ -156,4 +168,5 @@ class TriangleDrawable extends Sized2DDrawable implements ShapeDrawable {
     final size = super.getSize();
     return Size(size.width, size.height);
   }
+
 }
