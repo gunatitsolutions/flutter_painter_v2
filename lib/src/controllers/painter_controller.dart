@@ -148,6 +148,14 @@ class PainterController extends ValueNotifier<PainterControllerValue> {
     return value;
   }
 
+  bool updateDrawables(List<Drawable> oldDrawables, List<Drawable> newDrawables,
+      {bool newAction = true}) {
+    final action = UpdateDrawablesAction(oldDrawables, newDrawables);
+    final value = action.perform(this);
+    if (value) _addAction(action, newAction);
+    return value;
+  }
+
   /// Removes the first occurrence of [drawable] from the controller value.
   ///
   /// Returns `true` if [drawable] was in the controller value, `false` otherwise.
