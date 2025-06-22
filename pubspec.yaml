@@ -12,13 +12,13 @@ dependencies:
   flutter:
     sdk: flutter
 
-  collection: ^1.18.0
+  collection: ^1.19.1
   flutter_svg:
 
 dev_dependencies:
-  flutter_lints: ^2.0.1
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
-  mocktail: ^0.3.0
+  mocktail: ^1.0.4
 
 flutter:
