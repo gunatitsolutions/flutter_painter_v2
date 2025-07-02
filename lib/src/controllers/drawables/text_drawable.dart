@@ -57,6 +57,12 @@ class TextDrawable extends ObjectDrawable {
 
   final double backgroundPadding;
 
+  final int? maxLines;
+
+  final bool softWrap;
+
+  final TextOverflow overflow;
+
   /// Creates a [TextDrawable] to draw [text].
   ///
   /// The path will be drawn with the passed [style] if provided.
@@ -83,6 +89,9 @@ class TextDrawable extends ObjectDrawable {
     this.shadowOffset = const Offset(2, 2),
     this.showBackgroundBox = false,
     this.backgroundPadding = 8,
+    this.maxLines,
+    this.softWrap = true,
+    this.overflow = TextOverflow.clip,
     bool locked = false,
     bool hidden = false,
     Set<ObjectDrawableAssist> assists = const <ObjectDrawableAssist>{},
@@ -91,6 +100,8 @@ class TextDrawable extends ObjectDrawable {
           textAlign: textAlign,
           textScaler: TextScaler.linear(scale),
           textDirection: direction,
+          maxLines: maxLines,
+          ellipsis: overflow == TextOverflow.ellipsis ? '…' : null,
         ),
         super(
             position: position,
@@ -110,8 +121,10 @@ class TextDrawable extends ObjectDrawable {
     // It is shifted back by half of its width and height to be drawn in the center
     textPainter.paint(canvas,
         position - Offset(textPainter.width / 2, textPainter.height / 2));*/
+    double maxTextWidth = softWrap ? size.width * scale : double.infinity;
 
-    textPainter.layout(maxWidth: size.width * scale);
+    textPainter.layout(maxWidth: maxTextWidth);
+  //  textPainter.layout(maxWidth: size.width * scale);
     final Offset drawOffset =
         position - Offset(textPainter.width / 2, textPainter.height / 2);
 
@@ -339,6 +352,9 @@ class TextDrawable extends ObjectDrawable {
     Offset? shadowOffset,
     bool? showBackgroundBox,
     double? backgroundPadding,
+    int? maxLines,
+    bool? softWrap,
+    TextOverflow? overflow,
   }) {
     return TextDrawable(
       text: text ?? this.text,
@@ -362,6 +378,9 @@ class TextDrawable extends ObjectDrawable {
       shadowOffset: shadowOffset ?? this.shadowOffset,
       showBackgroundBox: showBackgroundBox ?? this.showBackgroundBox,
       backgroundPadding: backgroundPadding ?? this.backgroundPadding,
+      maxLines: maxLines ?? this.maxLines,
+      softWrap: softWrap ?? this.softWrap,
+      overflow: overflow ?? this.overflow,
     );
   }
 
