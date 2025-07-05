@@ -7,3 +7,4 @@ export 'remove_drawable_action.dart';
 export 'replace_drawable_action.dart';
 export 'update_drawable_action.dart';
 export 'grouped_action.dart';
+export 'reorder_drawable_action.dart';

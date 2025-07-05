@@ -152,7 +152,8 @@ class _ObjectWidgetState extends State<_ObjectWidget> {
             TextDrawable(
               position: Offset(0, 0),
               text: '',
-            ));
+            ),
+          );
     return LayoutBuilder(builder: (context, constraints) {
       return Stack(
         children: [

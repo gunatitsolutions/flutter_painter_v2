@@ -209,6 +209,12 @@ class PainterController extends ValueNotifier<PainterControllerValue> {
     _addAction(action, newAction);
   }
 
+  bool reorderDrawable(int oldIndex, int newIndex, {bool newAction = true}) {
+    final action = ReorderDrawableAction(oldIndex, newIndex);
+    final result = action.perform(this);
+    if (result) _addAction(action, newAction);
+    return result;
+  }
   /// Groups all drawables in the controller into one drawable.
   ///
   /// This is used when an erase drawable is added, to prevent modifications to previous drawables.

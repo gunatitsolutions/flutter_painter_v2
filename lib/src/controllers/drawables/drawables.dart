@@ -6,3 +6,4 @@ export 'background/background_drawables.dart';
 export 'shape/shape_drawables.dart';
 export 'image_drawable.dart';
 export 'mask_drawable.dart';
+export 'selection_drawable.dart';

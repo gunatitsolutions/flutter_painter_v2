@@ -118,23 +118,23 @@ class _TextWidgetState extends State<_TextWidget> {
   Future<void> openTextEditor(TextDrawable drawable,
       [bool isNew = false]) async {
     await Navigator.push(
-        context,
-        PageRouteBuilder(
-            transitionDuration: const Duration(milliseconds: 300),
-            reverseTransitionDuration: const Duration(milliseconds: 300),
-            opaque: false,
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                EditTextWidget(
-                  controller: PainterController.of(context),
-                  drawable: drawable,
-                  isNew: isNew,
-                ),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) =>
-                    FadeTransition(
-                      opacity: animation,
-                      child: child,
-                    )));
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        opaque: false,
+        pageBuilder: (context, animation, secondaryAnimation) => EditTextWidget(
+          controller: PainterController.of(context),
+          drawable: drawable,
+          isNew: isNew,
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
+      ),
+    );
   }
 }
 
@@ -152,11 +152,11 @@ class EditTextWidget extends StatefulWidget {
   final bool isNew;
 
   const EditTextWidget({
-    Key? key,
+    super.key,
     required this.controller,
     required this.drawable,
     this.isNew = false,
-  }) : super(key: key);
+  });
 
   @override
   EditTextWidgetState createState() => EditTextWidgetState();
