@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_painter_v2/flutter_painter.dart';
 import 'events/selected_object_drawable_removed_event.dart';
 import '../views/widgets/painter_controller_widget.dart';
 import 'actions/actions.dart';
@@ -359,8 +360,10 @@ class PainterController extends ValueNotifier<PainterControllerValue> {
     if (drawable == value.selectedObjectDrawable) return;
     if (drawable != null && !value.drawables.contains(drawable)) return;
     value = value.copyWith(
-      selectedObjectDrawable: drawable,
+      selectedObjectDrawable: SelectableObjectDrawable(drawable: drawable!),
     );
+
+    // SelectableObjectDrawable(drawable: drawable!);
   }
 
   /// Deselects the object drawable from the drawables.

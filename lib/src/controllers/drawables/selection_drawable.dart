@@ -164,7 +164,27 @@ class SelectableObjectDrawable extends ObjectDrawable {
 
   @override
   void drawObject(Canvas canvas, Size size) {
-    drawable.draw(canvas, size);
+    // drawable.draw(canvas, size);
+    drawable.draw(canvas, size); // Draw original object
+    final b = bounds;
+
+    // Draw border
+    canvas.drawRect(b, borderPaint);
+
+    // Draw resize handles
+    for (var handle in HandleType.values) {
+      if (handle == HandleType.rotate) {
+        final offset = Offset(b.center.dx, b.top - 30);
+        canvas.drawCircle(offset, handleSize / 2, handlePaint);
+      } else {
+        final offset = _handleOffset(handle, b);
+        canvas.drawRect(
+          Rect.fromCenter(center: offset, width: handleSize, height: handleSize),
+          handlePaint,
+        );
+      }
+    }
+
   }
 
   @override
