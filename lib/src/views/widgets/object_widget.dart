@@ -42,7 +42,7 @@ class _ObjectWidgetState extends State<_ObjectWidget> {
   double transformationScale = 1;
 
   /// Getter for extra amount of padding added around each object to make it easier to interact with.
-  double get objectPadding => 25 / transformationScale;
+  double get objectPadding => 5 / transformationScale;
 
   /// Getter for the duration of fade-in and out animations for the object controls.
   static Duration get controlsTransitionDuration =>
@@ -159,6 +159,23 @@ class _ObjectWidgetState extends State<_ObjectWidget> {
         children: [
           Positioned.fill(
               child: GestureDetector(
+               /* onTapDown: (details) {
+                  final seDrawable = controller?.selectedObjectDrawable?.getSize();
+                  final position = details.localPosition;
+                  final newSelected = drawables.lastWhereOrNull(
+                        (drawable) {
+                      final rect = Rect.fromCenter(
+                        center: drawable.position,
+                        width: (seDrawable?.width ?? 100) * drawable.scale,
+                        height: (seDrawable?.height ?? 100) * drawable.scale,
+                      );
+                      return rect.contains(position);
+                    },
+                  );
+                  setState(() {
+                    controller?.selectObjectDrawable(newSelected);
+                  });
+                },*/
                   onTap: onBackgroundTapped,
                   onScaleStart: drawableAirTransformable
                       ? (details) =>
@@ -639,6 +656,8 @@ class _ObjectWidgetState extends State<_ObjectWidget> {
 
     updateDrawable(drawable, drawable, newAction: true);
   }
+
+
 
   /// Callback when the object drawable finishes movement, scaling and rotation.
   ///
