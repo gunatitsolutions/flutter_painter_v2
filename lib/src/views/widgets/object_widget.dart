@@ -42,7 +42,7 @@ class _ObjectWidgetState extends State<_ObjectWidget> {
   double transformationScale = 1;
 
   /// Getter for extra amount of padding added around each object to make it easier to interact with.
-  double get objectPadding => 5 / transformationScale;
+  double get objectPadding => 10 / transformationScale;
 
   /// Getter for the duration of fade-in and out animations for the object controls.
   static Duration get controlsTransitionDuration =>
