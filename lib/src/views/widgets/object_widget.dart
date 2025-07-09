@@ -244,7 +244,7 @@ class _ObjectWidgetState extends State<_ObjectWidget> {
                                                 return Container(
                                                   decoration: BoxDecoration(
                                                     border: Border.all(
-                                                        color: Colors.black,
+                                                        color: Colors.blue,
                                                         width:
                                                             selectedBorderWidth),
                                                   ),
@@ -261,12 +261,12 @@ class _ObjectWidgetState extends State<_ObjectWidget> {
                                               return Container(
                                                 decoration: BoxDecoration(
                                                     border: Border.all(
-                                                        color: Colors.white,
+                                                        color: Colors.blue,
                                                         width:
                                                             selectedBorderWidth),
                                                     boxShadow: [
                                                       BorderBoxShadow(
-                                                        color: Colors.black,
+                                                        color: Colors.grey,
                                                         blurRadius:
                                                             selectedBlurRadius,
                                                       )
@@ -1117,7 +1117,7 @@ class _ObjectControlBox extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: shadowColor,
-            blurRadius: 2,
+            blurRadius: 1,
           )
         ],
       ),
