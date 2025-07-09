@@ -360,7 +360,7 @@ class PainterController extends ValueNotifier<PainterControllerValue> {
     if (drawable == value.selectedObjectDrawable) return;
     if (drawable != null && !value.drawables.contains(drawable)) return;
     value = value.copyWith(
-      selectedObjectDrawable: SelectableObjectDrawable(drawable: drawable!),
+      selectedObjectDrawable: drawable,
     );
 
     // SelectableObjectDrawable(drawable: drawable!);
