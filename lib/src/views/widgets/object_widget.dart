@@ -42,7 +42,7 @@ class _ObjectWidgetState extends State<_ObjectWidget> {
   double transformationScale = 1;
 
   /// Getter for extra amount of padding added around each object to make it easier to interact with.
-  double get objectPadding => 10 / transformationScale;
+  double get objectPadding => 7 / transformationScale;
 
   /// Getter for the duration of fade-in and out animations for the object controls.
   static Duration get controlsTransitionDuration =>
@@ -56,7 +56,7 @@ class _ObjectWidgetState extends State<_ObjectWidget> {
   double get selectedBlurRadius => 2 / transformationScale;
 
   /// Getter for the border width of the selected object highlighting.
-  double get selectedBorderWidth => 1 / transformationScale;
+  double get selectedBorderWidth => 2 / transformationScale;
 
   /// Keeps track of the initial local focal point when scaling starts.
   ///
@@ -1069,6 +1069,8 @@ class _ObjectWidgetState extends State<_ObjectWidget> {
           _m4storage[10] * _m4storage[10]);
     });
   }
+
+
 }
 
 /// The control box container (only the UI, no logic).
