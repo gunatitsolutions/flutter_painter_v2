@@ -186,3 +186,24 @@ bool _listEquals(List<Color> a, List<Color> b) {
   }
   return true;
 }
+
+extension GradientBackgroundDrawableGetter on List<Color> {
+  /// Returns a [GradientBackgroundDrawable] using the current list of colors.
+  /// Defaults to `GradientType.linear` if not specified.
+  GradientBackgroundDrawable gradientDrawable({
+    GradientType type = GradientType.linear,
+    AlignmentGeometry begin = Alignment.topLeft,
+    AlignmentGeometry end = Alignment.bottomRight,
+    AlignmentGeometry center = Alignment.center,
+    double radius = 0.5,
+  }) {
+    return GradientBackgroundDrawable(
+      gradientType: type,
+      colors: this,
+      begin: begin,
+      end: end,
+      center: center,
+      radius: radius,
+    );
+  }
+}
