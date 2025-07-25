@@ -25,6 +25,8 @@ class ImageDrawable extends ObjectDrawable {
 
   final String? id;
 
+  final double? opacity;
+
   /// Creates an [ImageDrawable] with the given [image].
   ImageDrawable({
     required Offset position,
@@ -43,6 +45,7 @@ class ImageDrawable extends ObjectDrawable {
     this.filterQuality = FilterQuality.low,
     this.clipPath,
     this.id,
+    this.opacity = 1.0,
   }) : super(
           position: position,
           rotationAngle: rotationAngle,
@@ -70,6 +73,7 @@ class ImageDrawable extends ObjectDrawable {
     required Image image,
     bool flipped = false,
     String? id,
+    double? opacity,
   }) : this(
           position: position,
           rotationAngle: rotationAngle,
@@ -81,6 +85,7 @@ class ImageDrawable extends ObjectDrawable {
           hidden: hidden,
           locked: locked,
           id: id,
+          opacity: opacity,
         );
 
   /// Creates a copy of this but with the given fields replaced with the new values.
@@ -100,6 +105,7 @@ class ImageDrawable extends ObjectDrawable {
     ColorFilter? colorFilter,
     FilterQuality? filterQuality,
     Path? clipPath,
+    double? opacity,
   }) {
     return ImageDrawable(
       id: id ?? this.id,
@@ -116,6 +122,7 @@ class ImageDrawable extends ObjectDrawable {
       colorFilter: colorFilter ?? this.colorFilter,
       filterQuality: filterQuality ?? this.filterQuality,
       clipPath: clipPath ?? this.clipPath,
+      opacity:  opacity ?? this.opacity,
     );
   }
 
@@ -130,7 +137,7 @@ class ImageDrawable extends ObjectDrawable {
     canvas.save();
     final paint = Paint()
       ..color =
-          const Color.fromRGBO(10, 10, 10, 0.9) // Set the color for the path
+          const Color.fromRGBO(10, 10, 10, 0.9).withValues(alpha: opacity) // Set the color for the path
       ..filterQuality = filterQuality
       ..style = PaintingStyle.fill
       ..strokeWidth = 10.0;

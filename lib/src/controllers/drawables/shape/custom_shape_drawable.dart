@@ -28,6 +28,8 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
 
   final Offset shadowOffset;
 
+  final double opacity;
+
   CustomPathDrawable({
     required this.originalPath,
     required Offset position,
@@ -49,6 +51,7 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
     bool locked = false,
     bool hidden = false,
     this.id,
+    this.opacity = 1.0,
   })  : paint = paint ?? ShapeDrawable.defaultPaint,
         super(
           size: size,
@@ -82,6 +85,7 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
     Color? shadowColor,
     double? shadowBlurRadius,
     Offset? shadowOffset,
+    double? opacity,
   }) {
     return CustomPathDrawable(
       originalPath: originalPath,
@@ -104,6 +108,7 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
       shadowColor: shadowColor ?? this.shadowColor,
       shadowBlurRadius: shadowBlurRadius ?? this.shadowBlurRadius,
       shadowOffset: shadowOffset ?? this.shadowOffset,
+      opacity:  opacity ?? this.opacity,
     );
   }
 
@@ -139,7 +144,7 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
     // Optional: Draw shadow
     if (enableShadow) {
       final shadowPaint = Paint()
-        ..color = shadowColor
+        ..color = shadowColor.withValues(alpha: opacity)
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, shadowBlurRadius);
 
       canvas.drawPath(centeredPath.shift(shadowOffset), shadowPaint);
@@ -147,7 +152,7 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
 
     // Fill (background color)
     final fillPaint = Paint()
-      ..color = backgroundColor
+      ..color = backgroundColor.withValues(alpha: opacity)
       ..style = PaintingStyle.fill;
 
     canvas.drawPath(centeredPath, fillPaint);
@@ -155,7 +160,7 @@ class CustomPathDrawable extends Sized2DDrawable implements ShapeDrawable {
     // Stroke
     if (enableStroke && strokeWidth > 0) {
       final strokePaint = Paint()
-        ..color = strokeColor
+        ..color = strokeColor.withValues(alpha: opacity)
         ..strokeWidth = strokeWidth
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round;

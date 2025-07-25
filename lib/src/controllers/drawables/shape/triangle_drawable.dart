@@ -29,6 +29,8 @@ class TriangleDrawable extends Sized2DDrawable implements ShapeDrawable {
 
   final Offset shadowOffset;
 
+  final double? opacity;
+
   /// The border radius of the rectangle.
   /// The default value is a circular radius of 5 on all corners.
   BorderRadius borderRadius;
@@ -55,6 +57,7 @@ class TriangleDrawable extends Sized2DDrawable implements ShapeDrawable {
     this.strokeWidth = 0.0,
     this.borderRadius = BorderRadius.zero,
     this.id,
+    this.opacity = 1.0,
   })  : paint = paint ?? ShapeDrawable.defaultPaint,
         super(
         size: size,
@@ -103,7 +106,7 @@ class TriangleDrawable extends Sized2DDrawable implements ShapeDrawable {
 
     if (backgroundColor.alpha != 0) {
       final paint = Paint()
-        ..color = backgroundColor
+        ..color = backgroundColor.withValues(alpha: opacity)
         ..style = PaintingStyle.fill;
       canvas.drawPath(path, paint);
     }
@@ -111,7 +114,7 @@ class TriangleDrawable extends Sized2DDrawable implements ShapeDrawable {
     // 2. Stroke
     if (strokeWidth > 0 && strokeColor.alpha != 0) {
       final paint = Paint()
-        ..color = strokeColor
+        ..color = strokeColor.withValues(alpha: opacity)
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth;
       canvas.drawPath(path, paint);
@@ -139,6 +142,7 @@ class TriangleDrawable extends Sized2DDrawable implements ShapeDrawable {
     Color? shadowColor,
     double? shadowBlurRadius,
     Offset? shadowOffset,
+    double? opacity,
   }) {
     return TriangleDrawable(
       hidden: hidden ?? this.hidden,
@@ -160,6 +164,7 @@ class TriangleDrawable extends Sized2DDrawable implements ShapeDrawable {
       shadowColor: shadowColor ?? this.shadowColor,
       shadowBlurRadius: shadowBlurRadius ?? this.shadowBlurRadius,
       shadowOffset: shadowOffset ?? this.shadowOffset,
+      opacity: opacity ?? this.opacity,
     );
   }
 

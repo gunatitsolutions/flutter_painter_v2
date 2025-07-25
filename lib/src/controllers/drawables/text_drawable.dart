@@ -63,6 +63,8 @@ class TextDrawable extends ObjectDrawable {
 
   final TextOverflow overflow;
 
+  final double opacity;
+
   /// Creates a [TextDrawable] to draw [text].
   ///
   /// The path will be drawn with the passed [style] if provided.
@@ -94,6 +96,7 @@ class TextDrawable extends ObjectDrawable {
     this.overflow = TextOverflow.clip,
     bool locked = false,
     bool hidden = false,
+    this.opacity = 1.0,
     Set<ObjectDrawableAssist> assists = const <ObjectDrawableAssist>{},
   })  : textPainter = TextPainter(
           text: TextSpan(text: text, style: style),
@@ -137,7 +140,7 @@ class TextDrawable extends ObjectDrawable {
         Radius.circular(cornerRadius),
       );
 
-      final Paint bgPaint = Paint()..color = backgroundColor;
+      final Paint bgPaint = Paint()..color = backgroundColor.withValues(alpha: opacity);
 
       if (enableShadow) {
         canvas.drawShadow(Path()..addRRect(background), shadowColor, shadowBlurRadius, true);
@@ -159,7 +162,7 @@ class TextDrawable extends ObjectDrawable {
 
       if (enableStroke || backgroundType.isStroke) {
         final Paint strokePaint = Paint()
-          ..color = strokeColor
+          ..color = strokeColor.withValues(alpha: opacity)
           ..style = PaintingStyle.stroke
           ..strokeWidth = strokeWidth;
         if (backgroundType.isSlant) {
@@ -355,6 +358,7 @@ class TextDrawable extends ObjectDrawable {
     int? maxLines,
     bool? softWrap,
     TextOverflow? overflow,
+    double? opacity,
   }) {
     return TextDrawable(
       text: text ?? this.text,
@@ -381,6 +385,7 @@ class TextDrawable extends ObjectDrawable {
       maxLines: maxLines ?? this.maxLines,
       softWrap: softWrap ?? this.softWrap,
       overflow: overflow ?? this.overflow,
+      opacity: opacity ?? this.opacity,
     );
   }
 

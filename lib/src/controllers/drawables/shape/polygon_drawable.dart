@@ -38,6 +38,8 @@ class PolygonDrawable extends Sized2DDrawable implements ShapeDrawable {
   /// The default value is a circular radius of 5 on all corners.
   BorderRadius borderRadius;
 
+  final double opacity;
+
   PolygonDrawable({
     required this.sides,
     Paint? paint,
@@ -61,6 +63,7 @@ class PolygonDrawable extends Sized2DDrawable implements ShapeDrawable {
     this.shadowColor = Colors.transparent,
     this.strokeWidth = 0.0,
     this.borderRadius =  BorderRadius.zero,
+    this.opacity = 1.0,
   })  : assert(sides >= 3, 'Polygon must have at least 3 sides'),
         paint = paint ?? ShapeDrawable.defaultPaint,
         super(
@@ -139,7 +142,7 @@ class PolygonDrawable extends Sized2DDrawable implements ShapeDrawable {
     path.close();
     if (backgroundColor.alpha != 0) {
       final paint = Paint()
-        ..color = backgroundColor
+        ..color = backgroundColor.withValues(alpha: opacity)
         ..style = PaintingStyle.fill;
       canvas.drawPath(path, paint);
     }
@@ -147,7 +150,7 @@ class PolygonDrawable extends Sized2DDrawable implements ShapeDrawable {
     // 2. Stroke
     if (strokeWidth > 0 && strokeColor.alpha != 0) {
       final paint = Paint()
-        ..color = strokeColor
+        ..color = strokeColor.withValues(alpha: opacity)
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth;
       canvas.drawPath(path, paint);
@@ -176,6 +179,7 @@ class PolygonDrawable extends Sized2DDrawable implements ShapeDrawable {
     Color? shadowColor,
     double? shadowBlurRadius,
     Offset? shadowOffset,
+    double? opacity,
   }) {
     return PolygonDrawable(
       sides: sides ?? this.sides,
@@ -198,6 +202,7 @@ class PolygonDrawable extends Sized2DDrawable implements ShapeDrawable {
       shadowColor: shadowColor ?? this.shadowColor,
       shadowBlurRadius: shadowBlurRadius ?? this.shadowBlurRadius,
       shadowOffset: shadowOffset ?? this.shadowOffset,
+      opacity: opacity ?? this.opacity
     );
   }
 

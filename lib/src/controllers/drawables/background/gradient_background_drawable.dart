@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'background_drawable.dart';
+
 enum GradientType {
   solid,
   linear,
   radial,
   sweep,
 }
+
 /// A drawable background with a gradient fill.
 ///
 /// Use this to render a gradient background in the Flutter Painter canvas.
@@ -43,7 +45,7 @@ class GradientBackgroundDrawable extends BackgroundDrawable {
   @override
   void draw(Canvas canvas, Size size) {
     _cachedRect ??= Rect.fromLTWH(0, 0, size.width, size.height);
-
+    var paint = Paint();
     if (_lastSize != size || _cachedShader == null) {
       final gradient = gradientType.toGradient(
         colors: colors,
@@ -55,10 +57,15 @@ class GradientBackgroundDrawable extends BackgroundDrawable {
       _cachedShader = gradient.createShader(_cachedRect!);
       _lastSize = size;
     }
-
-    final paint = Paint()
-      ..shader = _cachedShader
-      ..style = PaintingStyle.fill;
+    if (colors.length == 1) {
+      paint = Paint()
+        ..color = colors.first
+        ..style = PaintingStyle.fill;
+    } else {
+      paint = Paint()
+        ..shader = _cachedShader
+        ..style = PaintingStyle.fill;
+    }
 
     canvas.drawRect(_cachedRect!, paint);
 
@@ -83,7 +90,6 @@ class GradientBackgroundDrawable extends BackgroundDrawable {
     // canvas.drawRect(rect, paint);
   }
 
-
   GradientBackgroundDrawable copyWith({
     GradientType? gradientType,
     List<Color>? colors,
@@ -105,26 +111,25 @@ class GradientBackgroundDrawable extends BackgroundDrawable {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is GradientBackgroundDrawable &&
-              runtimeType == other.runtimeType &&
-              gradientType == other.gradientType &&
-              _listEquals(colors, other.colors) &&
-              begin == other.begin &&
-              end == other.end &&
-              center == other.center &&
-              radius == other.radius;
+      other is GradientBackgroundDrawable &&
+          runtimeType == other.runtimeType &&
+          gradientType == other.gradientType &&
+          _listEquals(colors, other.colors) &&
+          begin == other.begin &&
+          end == other.end &&
+          center == other.center &&
+          radius == other.radius;
 
   @override
   int get hashCode => Object.hash(
-    gradientType,
-    Object.hashAll(colors),
-    begin,
-    end,
-    center,
-    radius,
-  );
+        gradientType,
+        Object.hashAll(colors),
+        begin,
+        end,
+        center,
+        radius,
+      );
 }
-
 
 extension GradientTypeExtension on GradientType {
   Gradient toGradient({
@@ -178,6 +183,7 @@ extension GradientTypeExtension on GradientType {
     }
   }
 }
+
 /// Utility function for comparing two color lists.
 bool _listEquals(List<Color> a, List<Color> b) {
   if (a.length != b.length) return false;
